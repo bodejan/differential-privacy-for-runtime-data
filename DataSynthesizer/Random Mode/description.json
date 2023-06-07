@@ -1,0 +1,1601 @@
+{
+    "meta": {
+        "num_tuples": 353,
+        "num_attributes": 73,
+        "num_attributes_in_BN": 72,
+        "all_attributes": [
+            "timestamp",
+            "cpu.%usr",
+            "cpu.%nice",
+            "cpu.%sys",
+            "cpu.%iowait",
+            "cpu.%steal",
+            "cpu.%irq",
+            "cpu.%soft",
+            "cpu.%guest",
+            "cpu.%gnice",
+            "cpu.%idle",
+            "task.proc/s",
+            "task.cswch/s",
+            "intr.intr/s",
+            "swap.pswpin/s",
+            "swap.pswpout/s",
+            "paging.pgpgin/s",
+            "paging.pgpgout/s",
+            "paging.fault/s",
+            "paging.majflt/s",
+            "paging.pgfree/s",
+            "paging.pgscank/s",
+            "paging.pgscand/s",
+            "paging.pgsteal/s",
+            "paging.%vmeff",
+            "io.tps",
+            "io.rtps",
+            "io.wtps",
+            "io.bread/s",
+            "io.bwrtn/s",
+            "memory.kbmemfree",
+            "memory.kbavail",
+            "memory.kbmemused",
+            "memory.%memused",
+            "memory.kbbuffers",
+            "memory.kbcached",
+            "memory.kbcommit",
+            "memory.%commit",
+            "memory.kbactive",
+            "memory.kbinact",
+            "memory.kbdirty",
+            "memory.kbanonpg",
+            "memory.kbslab",
+            "memory.kbkstack",
+            "memory.kbpgtbl",
+            "memory.kbvmused",
+            "swap.kbswpfree",
+            "swap.kbswpused",
+            "swap.%swpused",
+            "swap.kbswpcad",
+            "swap.%swpcad",
+            "load.runq-sz",
+            "load.plist-sz",
+            "load.ldavg-1",
+            "load.ldavg-5",
+            "load.ldavg-15",
+            "load.blocked",
+            "disk.tps",
+            "disk.rd_sec/s",
+            "disk.wr_sec/s",
+            "disk.avgrq-sz",
+            "disk.avgqu-sz",
+            "disk.await",
+            "disk.svctm",
+            "disk.%util",
+            "network.rxpck/s",
+            "network.txpck/s",
+            "network.rxkB/s",
+            "network.txkB/s",
+            "network.rxcmp/s",
+            "network.txcmp/s",
+            "network.rxmcst/s",
+            "network.%ifutil"
+        ],
+        "candidate_keys": [
+            "memory.kbcached"
+        ],
+        "non_categorical_string_attributes": [],
+        "attributes_in_BN": [
+            "timestamp",
+            "cpu.%usr",
+            "cpu.%nice",
+            "cpu.%sys",
+            "cpu.%iowait",
+            "cpu.%steal",
+            "cpu.%irq",
+            "cpu.%soft",
+            "cpu.%guest",
+            "cpu.%gnice",
+            "cpu.%idle",
+            "task.proc/s",
+            "task.cswch/s",
+            "intr.intr/s",
+            "swap.pswpin/s",
+            "swap.pswpout/s",
+            "paging.pgpgin/s",
+            "paging.pgpgout/s",
+            "paging.fault/s",
+            "paging.majflt/s",
+            "paging.pgfree/s",
+            "paging.pgscank/s",
+            "paging.pgscand/s",
+            "paging.pgsteal/s",
+            "paging.%vmeff",
+            "io.tps",
+            "io.rtps",
+            "io.wtps",
+            "io.bread/s",
+            "io.bwrtn/s",
+            "memory.kbmemfree",
+            "memory.kbavail",
+            "memory.kbmemused",
+            "memory.%memused",
+            "memory.kbbuffers",
+            "memory.kbcommit",
+            "memory.%commit",
+            "memory.kbactive",
+            "memory.kbinact",
+            "memory.kbdirty",
+            "memory.kbanonpg",
+            "memory.kbslab",
+            "memory.kbkstack",
+            "memory.kbpgtbl",
+            "memory.kbvmused",
+            "swap.kbswpfree",
+            "swap.kbswpused",
+            "swap.%swpused",
+            "swap.kbswpcad",
+            "swap.%swpcad",
+            "load.runq-sz",
+            "load.plist-sz",
+            "load.ldavg-1",
+            "load.ldavg-5",
+            "load.ldavg-15",
+            "load.blocked",
+            "disk.tps",
+            "disk.rd_sec/s",
+            "disk.wr_sec/s",
+            "disk.avgrq-sz",
+            "disk.avgqu-sz",
+            "disk.await",
+            "disk.svctm",
+            "disk.%util",
+            "network.rxpck/s",
+            "network.txpck/s",
+            "network.rxkB/s",
+            "network.txkB/s",
+            "network.rxcmp/s",
+            "network.txcmp/s",
+            "network.rxmcst/s",
+            "network.%ifutil"
+        ]
+    },
+    "attribute_description": {
+        "timestamp": {
+            "name": "timestamp",
+            "data_type": "DateTime",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 1506115394.0,
+            "max": 1506117154.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                1506115394.0,
+                1506117154.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "cpu.%usr": {
+            "name": "cpu.%usr",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.05,
+            "max": 96.42,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.05,
+                96.42
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "cpu.%nice": {
+            "name": "cpu.%nice",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "cpu.%sys": {
+            "name": "cpu.%sys",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 2.67,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                2.67
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "cpu.%iowait": {
+            "name": "cpu.%iowait",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 1.93,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.28,
+                0.03,
+                0.13,
+                0.0,
+                1.03,
+                1.13,
+                1.2,
+                0.8,
+                1.93,
+                1.7,
+                1.0,
+                0.5,
+                0.53,
+                0.05,
+                0.08
+            ],
+            "distribution_probabilities": [
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667,
+                0.06666666666666667
+            ]
+        },
+        "cpu.%steal": {
+            "name": "cpu.%steal",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 0.05,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.05,
+                0.0,
+                0.03,
+                0.02
+            ],
+            "distribution_probabilities": [
+                0.25,
+                0.25,
+                0.25,
+                0.25
+            ]
+        },
+        "cpu.%irq": {
+            "name": "cpu.%irq",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "cpu.%soft": {
+            "name": "cpu.%soft",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 0.05,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.05,
+                0.0,
+                0.03
+            ],
+            "distribution_probabilities": [
+                0.3333333333333333,
+                0.3333333333333333,
+                0.3333333333333333
+            ]
+        },
+        "cpu.%guest": {
+            "name": "cpu.%guest",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "cpu.%gnice": {
+            "name": "cpu.%gnice",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "cpu.%idle": {
+            "name": "cpu.%idle",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 2.25,
+            "max": 99.82,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                2.25,
+                99.82
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "task.proc/s": {
+            "name": "task.proc/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 34.6,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                33.8,
+                21.2,
+                34.6,
+                1.2,
+                0.4,
+                0.0,
+                0.8,
+                0.2,
+                0.6,
+                2.2,
+                12.8
+            ],
+            "distribution_probabilities": [
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091,
+                0.09090909090909091
+            ]
+        },
+        "task.cswch/s": {
+            "name": "task.cswch/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 836.4,
+            "max": 5796.2,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                836.4,
+                5796.2
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "intr.intr/s": {
+            "name": "intr.intr/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 478.8,
+            "max": 5425.2,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                478.8,
+                5425.2
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "swap.pswpin/s": {
+            "name": "swap.pswpin/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "swap.pswpout/s": {
+            "name": "swap.pswpout/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "paging.pgpgin/s": {
+            "name": "paging.pgpgin/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 0.8,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                0.8
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "paging.pgpgout/s": {
+            "name": "paging.pgpgout/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 8224.8,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                8224.8
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "paging.fault/s": {
+            "name": "paging.fault/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 8.2,
+            "max": 18108.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                8.2,
+                18108.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "paging.majflt/s": {
+            "name": "paging.majflt/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "paging.pgfree/s": {
+            "name": "paging.pgfree/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 15.0,
+            "max": 165006.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                15.0,
+                165006.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "paging.pgscank/s": {
+            "name": "paging.pgscank/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "paging.pgscand/s": {
+            "name": "paging.pgscand/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "paging.pgsteal/s": {
+            "name": "paging.pgsteal/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "paging.%vmeff": {
+            "name": "paging.%vmeff",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "io.tps": {
+            "name": "io.tps",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 59.2,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                59.2
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "io.rtps": {
+            "name": "io.rtps",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 0.2,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                0.2
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "io.wtps": {
+            "name": "io.wtps",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 59.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                59.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "io.bread/s": {
+            "name": "io.bread/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 1.6,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                1.6
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "io.bwrtn/s": {
+            "name": "io.bwrtn/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 14976.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                14976.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbmemfree": {
+            "name": "memory.kbmemfree",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 9160140,
+            "max": 11479220,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                9160140.0,
+                11479220.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbavail": {
+            "name": "memory.kbavail",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0
+            ],
+            "distribution_probabilities": [
+                1
+            ]
+        },
+        "memory.kbmemused": {
+            "name": "memory.kbmemused",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 3921688,
+            "max": 6240768,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                3921688.0,
+                6240768.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.%memused": {
+            "name": "memory.%memused",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 25.46,
+            "max": 40.52,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                25.46,
+                40.52
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbbuffers": {
+            "name": "memory.kbbuffers",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 28220,
+            "max": 30808,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                28220.0,
+                30808.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbcached": {
+            "name": "memory.kbcached",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": true,
+            "min": 1889680,
+            "max": 2021116,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                1889680.0,
+                2021116.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbcommit": {
+            "name": "memory.kbcommit",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 4058372,
+            "max": 17703152,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                4506268,
+                14253280,
+                17625212,
+                17691208,
+                17703152,
+                17693448,
+                17682184,
+                17671272,
+                17650064,
+                17635140,
+                17626088,
+                17616676,
+                17608424,
+                17599644,
+                17591916,
+                17583812,
+                17576088,
+                4058372
+            ],
+            "distribution_probabilities": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "memory.%commit": {
+            "name": "memory.%commit",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 26.35,
+            "max": 114.95,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                29.26,
+                92.55,
+                114.44,
+                114.87,
+                114.95,
+                114.89,
+                114.81,
+                114.74,
+                114.6,
+                114.51,
+                114.45,
+                114.39,
+                114.33,
+                114.28,
+                114.23,
+                114.17,
+                114.12,
+                26.35
+            ],
+            "distribution_probabilities": [
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555
+            ]
+        },
+        "memory.kbactive": {
+            "name": "memory.kbactive",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 2220752,
+            "max": 4531476,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                2220752.0,
+                4531476.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbinact": {
+            "name": "memory.kbinact",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 1341888,
+            "max": 1478504,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                1341888.0,
+                1478504.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbdirty": {
+            "name": "memory.kbdirty",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 261440,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                261440.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbanonpg": {
+            "name": "memory.kbanonpg",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 1661724,
+            "max": 3953632,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                1661724.0,
+                3953632.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbslab": {
+            "name": "memory.kbslab",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 95652,
+            "max": 99324,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                95652.0,
+                99324.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbkstack": {
+            "name": "memory.kbkstack",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 5240,
+            "max": 7328,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                5240.0,
+                7328.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbpgtbl": {
+            "name": "memory.kbpgtbl",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 8628,
+            "max": 15340,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                8628.0,
+                15340.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "memory.kbvmused": {
+            "name": "memory.kbvmused",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 30304,
+            "max": 30304,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                30304
+            ],
+            "distribution_probabilities": [
+                1
+            ]
+        },
+        "swap.kbswpfree": {
+            "name": "swap.kbswpfree",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0
+            ],
+            "distribution_probabilities": [
+                1
+            ]
+        },
+        "swap.kbswpused": {
+            "name": "swap.kbswpused",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0
+            ],
+            "distribution_probabilities": [
+                1
+            ]
+        },
+        "swap.%swpused": {
+            "name": "swap.%swpused",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "swap.kbswpcad": {
+            "name": "swap.kbswpcad",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0
+            ],
+            "distribution_probabilities": [
+                1
+            ]
+        },
+        "swap.%swpcad": {
+            "name": "swap.%swpcad",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "load.runq-sz": {
+            "name": "load.runq-sz",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 16,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                3,
+                7,
+                1,
+                8,
+                10,
+                9,
+                5,
+                6,
+                11,
+                4,
+                16,
+                0
+            ],
+            "distribution_probabilities": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "load.plist-sz": {
+            "name": "load.plist-sz",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 641,
+            "max": 900,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                641.0,
+                900.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "load.ldavg-1": {
+            "name": "load.ldavg-1",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 6.8,
+            "max": 8.87,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                6.8,
+                8.87
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "load.ldavg-5": {
+            "name": "load.ldavg-5",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 5.56,
+            "max": 7.69,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                5.56,
+                7.69
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "load.ldavg-15": {
+            "name": "load.ldavg-15",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 3.21,
+            "max": 6.97,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                3.21,
+                6.97
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "load.blocked": {
+            "name": "load.blocked",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 6,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0,
+                1,
+                5,
+                2,
+                6,
+                3
+            ],
+            "distribution_probabilities": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "disk.tps": {
+            "name": "disk.tps",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 59.2,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                59.2
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "disk.rd_sec/s": {
+            "name": "disk.rd_sec/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 1.6,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                1.6
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "disk.wr_sec/s": {
+            "name": "disk.wr_sec/s",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 14976.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                14976.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "disk.avgrq-sz": {
+            "name": "disk.avgrq-sz",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 256.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                256.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "disk.avgqu-sz": {
+            "name": "disk.avgqu-sz",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 130.64,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.08,
+                0.0,
+                0.03,
+                0.76,
+                63.72,
+                125.32,
+                110.81,
+                105.97,
+                107.82,
+                85.23,
+                95.61,
+                97.27,
+                130.64,
+                37.61,
+                0.01,
+                0.02,
+                0.07,
+                0.04
+            ],
+            "distribution_probabilities": [
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555,
+                0.05555555555555555
+            ]
+        },
+        "disk.await": {
+            "name": "disk.await",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 3554.22,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                3554.22
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "disk.svctm": {
+            "name": "disk.svctm",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 80.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                80.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "disk.%util": {
+            "name": "disk.%util",
+            "data_type": "Float",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 100.0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0,
+                100.0
+            ],
+            "distribution_probabilities": [
+                0.5,
+                0.5
+            ]
+        },
+        "network.rxpck/s": {
+            "name": "network.rxpck/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 2.6,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                2.4,
+                2.2,
+                2.6,
+                0.4,
+                0.0,
+                0.2,
+                0.6,
+                0.8
+            ],
+            "distribution_probabilities": [
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125
+            ]
+        },
+        "network.txpck/s": {
+            "name": "network.txpck/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 2.6,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                2.4,
+                2.2,
+                2.6,
+                0.4,
+                0.0,
+                0.2,
+                0.6,
+                0.8
+            ],
+            "distribution_probabilities": [
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125
+            ]
+        },
+        "network.rxkB/s": {
+            "name": "network.rxkB/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 0.31,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.28,
+                0.26,
+                0.31,
+                0.05,
+                0.03,
+                0.0,
+                0.01,
+                0.14,
+                0.06,
+                0.02,
+                0.09,
+                0.08,
+                0.04,
+                0.07
+            ],
+            "distribution_probabilities": [
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142,
+                0.07142857142857142
+            ]
+        },
+        "network.txkB/s": {
+            "name": "network.txkB/s",
+            "data_type": "Float",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0.0,
+            "max": 0.21,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.19,
+                0.18,
+                0.21,
+                0.03,
+                0.02,
+                0.0,
+                0.01,
+                0.13,
+                0.04,
+                0.08,
+                0.07,
+                0.05
+            ],
+            "distribution_probabilities": [
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333,
+                0.08333333333333333
+            ]
+        },
+        "network.rxcmp/s": {
+            "name": "network.rxcmp/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "network.txcmp/s": {
+            "name": "network.txcmp/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "network.rxmcst/s": {
+            "name": "network.rxmcst/s",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        },
+        "network.%ifutil": {
+            "name": "network.%ifutil",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 0,
+            "max": 0,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                0.0
+            ],
+            "distribution_probabilities": [
+                1.0
+            ]
+        }
+    }
+}
