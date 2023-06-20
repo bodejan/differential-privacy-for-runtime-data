@@ -1,0 +1,306 @@
+{
+    "meta": {
+        "num_tuples": 900,
+        "num_attributes": 9,
+        "num_attributes_in_BN": 9,
+        "all_attributes": [
+            "instance_count",
+            "machine_type",
+            "slots",
+            "memory",
+            "data_size_MB",
+            "features",
+            "observations",
+            "k",
+            "gross_runtime"
+        ],
+        "candidate_keys": [],
+        "non_categorical_string_attributes": [],
+        "attributes_in_BN": [
+            "instance_count",
+            "machine_type",
+            "slots",
+            "memory",
+            "data_size_MB",
+            "features",
+            "observations",
+            "k",
+            "gross_runtime"
+        ]
+    },
+    "attribute_description": {
+        "instance_count": {
+            "name": "instance_count",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 2,
+            "max": 12,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                2,
+                4,
+                6,
+                8,
+                10,
+                12
+            ],
+            "distribution_probabilities": [
+                0.2704243337676574,
+                0.1412753163543317,
+                0.15500296060298208,
+                0.43329738927502887,
+                0.0,
+                0.0
+            ]
+        },
+        "machine_type": {
+            "name": "machine_type",
+            "data_type": "String",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 9,
+            "max": 10,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                "m4.2xlarge",
+                "r4.2xlarge",
+                "r4.xlarge"
+            ],
+            "distribution_probabilities": [
+                0.0,
+                0.8547094140210787,
+                0.14529058597892133
+            ]
+        },
+        "slots": {
+            "name": "slots",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 8,
+            "max": 96,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                8,
+                16,
+                24,
+                32,
+                40,
+                48,
+                64,
+                80,
+                96
+            ],
+            "distribution_probabilities": [
+                0.11414857802259501,
+                0.3308704677771498,
+                0.07802846758173855,
+                0.06252791485506808,
+                0.07066425399062672,
+                0.0,
+                0.09413195801351382,
+                0.0,
+                0.24962835975930814
+            ]
+        },
+        "memory": {
+            "name": "memory",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 61000,
+            "max": 732000,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                61000.0,
+                94550.0,
+                128100.0,
+                161650.0,
+                195200.0,
+                228750.0,
+                262300.0,
+                295850.0,
+                329400.0,
+                362950.0,
+                396500.0,
+                430050.0,
+                463600.0,
+                497150.0,
+                530700.0,
+                564250.0,
+                597800.0,
+                631350.0,
+                664900.0,
+                698450.0
+            ],
+            "distribution_probabilities": [
+                0.01061413479946488,
+                0.06842610411549738,
+                0.0,
+                0.09007826777734224,
+                0.0,
+                0.10382912900338546,
+                0.0,
+                0.03428663562243601,
+                0.026880582847138772,
+                0.11645283755415851,
+                0.2313490281336317,
+                0.04786222768682705,
+                0.047429559546522296,
+                0.0,
+                0.053259410693476804,
+                0.0,
+                0.12532751918866153,
+                0.04420456303145756,
+                0.0,
+                0.0
+            ]
+        },
+        "data_size_MB": {
+            "name": "data_size_MB",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 8000,
+            "max": 30500,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                8000,
+                10500,
+                13200,
+                16000,
+                18600,
+                20300,
+                21300,
+                30500
+            ],
+            "distribution_probabilities": [
+                0.0,
+                0.05413919980442273,
+                0.12709753698682452,
+                0.13071152641817926,
+                0.6880517367905735,
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "features": {
+            "name": "features",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 5,
+            "max": 15,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                5,
+                10,
+                15
+            ],
+            "distribution_probabilities": [
+                0.8710545353150315,
+                0.0,
+                0.12894546468496842
+            ]
+        },
+        "observations": {
+            "name": "observations",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 100000000,
+            "max": 200000000,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                100000000,
+                125000000,
+                150000000,
+                175000000,
+                200000000
+            ],
+            "distribution_probabilities": [
+                0.5521758746437261,
+                0.0,
+                0.0,
+                0.4478241253562739,
+                0.0
+            ]
+        },
+        "k": {
+            "name": "k",
+            "data_type": "Integer",
+            "is_categorical": true,
+            "is_candidate_key": false,
+            "min": 3,
+            "max": 9,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                3,
+                5,
+                7,
+                9
+            ],
+            "distribution_probabilities": [
+                0.156379187116105,
+                0.23799190855688093,
+                0.6056289043270142,
+                0.0
+            ]
+        },
+        "gross_runtime": {
+            "name": "gross_runtime",
+            "data_type": "Integer",
+            "is_categorical": false,
+            "is_candidate_key": false,
+            "min": 94,
+            "max": 4556,
+            "missing_rate": 0.0,
+            "distribution_bins": [
+                94.0,
+                317.1,
+                540.2,
+                763.3,
+                986.4,
+                1209.5,
+                1432.6,
+                1655.7,
+                1878.8,
+                2101.8999999999996,
+                2325.0,
+                2548.1,
+                2771.2,
+                2994.2999999999997,
+                3217.4,
+                3440.5,
+                3663.6,
+                3886.7,
+                4109.799999999999,
+                4332.9
+            ],
+            "distribution_probabilities": [
+                0.3444014232397442,
+                0.0,
+                0.251683395300377,
+                0.00851108882531621,
+                0.2641436156409246,
+                0.021276326797930657,
+                0.0515623302366295,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.03849109157871438,
+                0.011760611016187422,
+                0.0,
+                0.00817011736417589,
+                0.0
+            ]
+        }
+    }
+}
