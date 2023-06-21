@@ -10,6 +10,7 @@ import threading
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Conv2D
+import dash_table
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -107,7 +108,7 @@ class IDS():
     def __init__(self, epsilon: int = 0, num_tuples: int = 1000, input_data:str = "../datasets/c3o-experiments/sort.csv", dataset: str="sort"):
 
         description_file = f'temp/description.json'
-        synthetic_data = f'temp/sythetic_data_ids.csv'
+        synthetic_data = f'temp/sythetic_data.csv'
 
         # An attribute is categorical if its domain size is less than this threshold.
         # Here modify the threshold to adapt to the domain size of "education" (which is 14 in input dataset).
@@ -122,8 +123,6 @@ class IDS():
 
         # Number of tuples generated in synthetic dataset.
         print("First", epsilon, num_tuples, input_data)
-
-        num_tuples = 1000
         
         print("Describer")
         describer = DataDescriber(category_threshold=threshold_value)
@@ -187,8 +186,8 @@ app.layout = html.Div(
         html.Br(),
         dbc.Card(
             dbc.CardBody([
-                html.H1("Synthetic Data for Runtime Prediction", style={'align':"center", 'margin': "0.5cm"}),
-            ]), style={'margin': "0.5cm"}),
+                html.H1("Synthetic Data for Runtime Prediction", style={'align':"center"}),
+            ]), style={'margin':"0.5cm"}, color="primary"),
         html.Br(),
         dbc.Row([
             dbc.Col([
@@ -220,7 +219,7 @@ app.layout = html.Div(
                                         {'label': 'C3O SGD', 'value': 'sgd'},
                                         {'label': 'C3O Pagerank', 'value': 'pagerank'},
                                     ],
-                                    value='kmeans'
+                                    value=''
                                 )
                             ]),
                             html.Br(),
@@ -228,7 +227,7 @@ app.layout = html.Div(
                             dcc.Slider(0, 1, 0.1, value=0, id='epsilon'),
                             html.Br(),
                             html.P("Amount of Data to Generate"),
-                            dbc.Input(id = "num", type="number", value = 10, min=10, max=100000, step=10),
+                            dbc.Input(id = "num", type="number", value = 1000, min=10, max=100000, step=10),
                             html.Br(),
                             html.Div([                            
                                 dcc.Loading(id="loading",type="circle", 
@@ -237,14 +236,19 @@ app.layout = html.Div(
                                 html.Div(id='output')
                             ])])
 
-                ], style={'height':'100%'}))
+                ], style={'margin':"0.5cm", 'height':'100%'}))
                 ], width=4),
             dbc.Col([
                 dbc.Card(
                 dbc.CardBody([
                     html.H4("Evaluation of Synthetic Data"),
+                    html.P("Selected Dataset:"),
+                    dash_table.DataTable(id='csv-table', data="", columns="", page_size=10),
+                    html.P("Generated Synthetic Data:"),
+                    dash_table.DataTable(id='csv-table1', data="", columns="", page_size=10),
+                    html.Br(),
                     html.Img(id="eval_image", src='assets/no.png', style={'height':'14cm'}),
-                    ], style={'margin': "0.5cm", 'height':'100%'}))
+                    ], style={'height':'100%'}))
                     ], width=8),
         ]),
         html.Br(),
@@ -253,20 +257,35 @@ app.layout = html.Div(
                 dbc.Card(
                 dbc.CardBody([
                             html.H4("Training of NN"),
+                            html.Label('Select Dataset'),
+                                dcc.Dropdown(
+                                    id='datasetnn',
+                                    options=[
+                                        {'label': 'C3O Kmeans', 'value': 'kmeans'},
+                                        {'label': 'C3O Sort', 'value': 'sort'},
+                                        {'label': 'C3O Grep', 'value': 'grep'},
+                                        {'label': 'C3O SGD', 'value': 'sgd'},
+                                        {'label': 'C3O Pagerank', 'value': 'pagerank'},
+                                    ],
+                                    value=''
+                                ),
                             html.Div([
                                 html.Label('Select Optimizer'),
                                 dcc.Dropdown(
                                     id='dropdown3',
                                     options=[
-                                        {'label': 'MAE', 'value': 'mae'},
-                                        {'label': 'MSE', 'value': 'mse'},
-                                        {'label': 'Adam', 'value': 'adam'}
+                                        {'label': 'RMSprop', 'value': 'RMSprop'},
+                                        {'label': 'Adagrad', 'value': 'Adagrad'},
+                                        {'label': 'Adam', 'value': 'adam'},
+                                        {'label': 'SGD', 'value': 'sgd'}
                                     ],
                                     value='adam'
                                 )
                             ]),
                             html.P("Select Test/Train Split"),
-                            dcc.Slider(30, 90, 5, value=70, id='split'), 
+                            dcc.Slider(30, 90, 5, value=70, id='split'),
+                            html.P("Select Epochs"), 
+                            dcc.Slider(1, 90, 5, value=20, id='epochs'), 
                             html.Br(),
                             html.Div([                            
                                 dcc.Loading(id="loading2",type="circle", 
@@ -274,45 +293,37 @@ app.layout = html.Div(
                                 html.Button('Submit', id='nnbutton', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
                                 html.Div(id='outputnn')
                             ])])
-                    ]))
+                    ], style={'margin':"0.5cm"}))
             ], width=4),
             dbc.Col([
                 dbc.Card(
                     dbc.CardBody([
-                        html.H4("Data Distribution in Training:", className="card-title",
-                                style={"height": "25px", "display": "flex", "justify-content": "center"}),
+                        html.H4("Prediction Quality:"),
                         html.Img(id="eval_imagenn", src='assets/no.png', style={'height':'14cm'}),
                         html.Img(id="eval_imagenn2", src='assets/no.png', style={'height':'14cm'}),
 
                     ])),
             ], width=8),
-        ], style={'margin': "0.5cm", 'height':'15cm'}),
-        dbc.Row([
-            dbc.Col([
-                dbc.Card(
-                dbc.CardBody([
-                            html.H4("Testing"),
-                            html.Button('Submit', id='test-bautton', n_clicks=0),
-
-                    ], style={'margin': "0.5cm"}))
-            ], width=4),
-            dbc.Col([
-                dbc.Card(
-                    dbc.CardBody([
-                        html.H4("Evaluation Results:", className="card-title",
-                                style={"height": "25px", "display": "flex", "justify-content": "center"}),
-                    ])),
-            ], width=8),
-        ], style={'margin': "0.5cm", 'height':'15cm'})
-
-
+        ], style={'height':'15cm'}),
     ])
+
+@app.callback(
+    [dash.dependencies.Output('csv-table', 'data'), 
+    dash.dependencies.Output('csv-table', 'columns')],
+    [dash.dependencies.Input('dropdown2', 'value')],
+    [dash.dependencies.State('dropdown2', 'value')],
+    prevent_initial_call=True)
+def update_output(value, v2):
+    df = pd.read_csv(f'../datasets/c3o-experiments/{value}.csv')
+    return df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
 @app.callback(
     [dash.dependencies.Output('output', 'children'),
     dash.dependencies.Output('eval_image', 'src'), 
-    dash.dependencies.Output('submit-button', 'n_clicks')],
+    dash.dependencies.Output('submit-button', 'n_clicks'),
+    dash.dependencies.Output('csv-table1', 'data'), 
+    dash.dependencies.Output('csv-table1', 'columns')],
     [dash.dependencies.Input('submit-button', 'n_clicks')],
     [dash.dependencies.State('dropdown1', 'value'),
      dash.dependencies.State('epsilon', 'value'),
@@ -325,14 +336,16 @@ def update_output(n_clicks, value1, value2, value3, value4, dataset, current_src
     print(n_clicks)
     if n_clicks == 0 :
         return "Please enter a value and click the submit button.", current_src, n_clicks
-    elif value4 is None:
-        return "Input value is required!", current_src, n_clicks
+    elif value4 is None or dataset =="":
+        return "Input value is required!", current_src, n_clicks, "", ""
     elif value1 == "cds":
         ds = CDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets/c3o-experiments/{dataset}.csv', dataset=dataset)
-        return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_{dataset}.png', n_clicks
+        df = pd.read_csv('temp/sythetic_data.csv')
+        return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
         ds = IDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets/c3o-experiments/{dataset}.csv', dataset=dataset)
-        return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_ids_{dataset}.png', n_clicks
+        df = pd.read_csv('temp/sythetic_data.csv')
+        return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_ids_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 @app.callback(
     [dash.dependencies.Output('outputnn', 'children'),
@@ -340,30 +353,31 @@ def update_output(n_clicks, value1, value2, value3, value4, dataset, current_src
     dash.dependencies.Output('eval_imagenn2', 'src'), 
     dash.dependencies.Output('nnbutton', 'n_clicks')],
     [dash.dependencies.Input('nnbutton', 'n_clicks')],
-    [dash.dependencies.State('dropdown3', 'value'),
+    [dash.dependencies.State('datasetnn', 'value'),
+     dash.dependencies.State('dropdown3', 'value'),
      dash.dependencies.State('split', 'value'),
+     dash.dependencies.State('epochs', 'value'),
      dash.dependencies.State('eval_imagenn', 'src')
      ],prevent_initial_call=True)
-def update_output(n_clicks, optimizer, split, current_src):
+def update_output(n_clicks, dataset, optimizer, split, epochs, current_src):
     print(n_clicks)
     if n_clicks == 0 :
         return "Please enter a value and click the submit button.", current_src, n_clicks
     else:
-        print("finished standard Model")
-        ds = NN(split)
-        return f"NN Trained", f'assets/normal.png',f'assets/syn.png', n_clicks
+        ds = NN(dataset, optimizer, split, epochs, n_clicks)
+        return f"NN Trained", f'assets/normal{n_clicks}.png',f'assets/syn{n_clicks}.png', n_clicks
 
 
 class NN(): 
-    def __init__(self, split: int = 70):
+    def __init__(self, dataset, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
         print("Train Model")
         # Read the given CSV file, and view some sample records
-        df = pd.read_csv("../datasets/c3o-experiments/sort.csv")
+        df = pd.read_csv(f"../datasets/c3o-experiments/{dataset}.csv")
         syndf = pd.read_csv("../dahboard/temp/sythetic_data.csv")
         df = df.drop(["machine_type" ], axis=1)
         syndf = syndf.drop(["machine_type" ], axis=1)
         dataset = df.values
-        syndataset = df.values
+        syndataset = syndf.values
 
         X = dataset[:,0:7]
         Y = dataset[:,-1]
@@ -377,7 +391,7 @@ class NN():
         
         print("finished standard Model")
 
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=1-(0.01*split))
 
 
         X = x_scaler.fit_transform(X_train)
@@ -396,17 +410,17 @@ class NN():
         ])
         print("Compiled standard Model")
 
-        model.compile(optimizer='SGD',
+        model.compile(optimizer=optimizer,
               loss='mae',
               metrics=['accuracy'])
-        synmodel.compile(optimizer='SGD',
+        synmodel.compile(optimizer=optimizer,
               loss='mae',
               metrics=['accuracy'])
 
         hist = model.fit(X, Y,
-          batch_size=32, epochs=100)
+          batch_size=32, epochs=epochs)
         hist = synmodel.fit(synX, synY,
-          batch_size=32, epochs=100)
+          batch_size=32, epochs=epochs)
         
         pred = model.predict(x_scaler.transform(X_test))
         synpred =synmodel.predict(synx_scaler.transform(X_test))
@@ -414,7 +428,7 @@ class NN():
         scaled_y =y_scaler.inverse_transform(pred) 
         synscaled_y =y_scaler.inverse_transform(synpred) 
         
-        def plot_scatter(x_values, y_values, y_values_2, stri):
+        def plot_scatter(x_values, y_values, y_values_2, stri, s1, s2):
 
             # Create a figure and axis
             fig, ax = plt.subplots()        
@@ -430,13 +444,16 @@ class NN():
             ax.set_ylabel('Runtime in ms')
             ax.legend()
             # Set a title for the plot
-            ax.set_title('Neural Network: Comparision between predicted and actual runtime.')
+            if stri == "syn":
+                ax.set_title(f'Neural Network trained with {s2} Synthetic Data')
+            else: 
+                ax.set_title(f'Neural Network trained with {s1} Private Data')
 
             # Show the plot
-            fig.savefig(f'assets/{stri}.png')
+            fig.savefig(f'assets/{stri}{n_clicks}.png')
         
-        plot_scatter(scaled_y, scaled_y, Y_test, "normal")
-        plot_scatter(synscaled_y, synscaled_y, Y_test, "syn")
+        plot_scatter(scaled_y, scaled_y, Y_test, "normal", X.shape, synX.shape)
+        plot_scatter(synscaled_y, synscaled_y, Y_test, "syn",X.shape, synX.shape)
 
 
 
