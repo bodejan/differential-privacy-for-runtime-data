@@ -29,19 +29,45 @@ import dash_table
 import cor_data_syn 
 import ind_data_syn 
 import eval_nn  
+from training import training_callbacks, training_layout
 
 
-app = dash.Dash(__name__, update_title=None, external_stylesheets=[dbc.themes.FLATLY])
+app = dash.Dash(
+    __name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True,
+)
 app.title = "Synthetic Runtime Data"
 
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Data Creation", href="/")),
+        dbc.NavItem(dbc.NavLink("Runtime Prediction", href="/page1")),
+        dbc.NavItem(dbc.NavLink("", href="/page2")),
+    ],
+    brand="Synthetic Data for Runtime Prediction",
+    color="#119dff",
+    brand_href="#",
 
-app.layout = html.Div(
+    dark=True,
+    style={
+        "height": "80px",
+        "line-height": "80px",
+    },
+)
+
+page1_layout = dbc.Container(
+    [navbar,training_layout()],
+    fluid=True,
+)
+# Define the page 2 layout
+page2_layout = dbc.Container(
+    [navbar], #creator_layout()],
+    fluid=True,
+)
+
+
+homelayout = html.Div(
     [
-        html.Br(),
-        dbc.Card(
-            dbc.CardBody([
-                html.H1("Synthetic Data for Runtime Prediction", style={'align':"center"}),
-            ]), style={'margin':"0.5cm"}, color="primary"),
+        navbar,
         html.Br(),
         dbc.Row([
             dbc.Col([
@@ -105,61 +131,15 @@ app.layout = html.Div(
                     ], style={'height':'100%'}))
                     ], width=8),
         ]),
-        html.Br(),
-        dbc.Row([
-            dbc.Col([
-                dbc.Card(
-                dbc.CardBody([
-                            html.H4("Training of NN"),
-                            html.Label('Select Dataset'),
-                                dcc.Dropdown(
-                                    id='datasetnn',
-                                    options=[
-                                        {'label': 'C3O Kmeans', 'value': 'kmeans'},
-                                        {'label': 'C3O Sort', 'value': 'sort'},
-                                        {'label': 'C3O Grep', 'value': 'grep'},
-                                        {'label': 'C3O SGD', 'value': 'sgd'},
-                                        {'label': 'C3O Pagerank', 'value': 'pagerank'},
-                                    ],
-                                    value=''
-                                ),
-                            html.Div([
-                                html.Label('Select Optimizer'),
-                                dcc.Dropdown(
-                                    id='dropdown3',
-                                    options=[
-                                        {'label': 'RMSprop', 'value': 'RMSprop'},
-                                        {'label': 'Adagrad', 'value': 'Adagrad'},
-                                        {'label': 'Adam', 'value': 'adam'},
-                                        {'label': 'SGD', 'value': 'sgd'}
-                                    ],
-                                    value='adam'
-                                )
-                            ]),
-                            html.P("Select Test/Train Split"),
-                            dcc.Slider(30, 90, 5, value=70, id='split'),
-                            html.P("Select Epochs"), 
-                            dcc.Slider(1, 90, 5, value=20, id='epochs'), 
-                            html.Br(),
-                            html.Div([                            
-                                dcc.Loading(id="loading2",type="circle", 
-                                children=[
-                                html.Button('Submit', id='nnbutton', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
-                                html.Div(id='outputnn')
-                            ])])
-                    ], style={'margin':"0.5cm"}))
-            ], width=4),
-            dbc.Col([
-                dbc.Card(
-                    dbc.CardBody([
-                        html.H4("Prediction Quality:"),
-                        html.Img(id="eval_imagenn", src='assets/no.png', style={'height':'14cm'}),
-                        html.Img(id="eval_imagenn2", src='assets/no.png', style={'height':'14cm'}),
 
-                    ])),
-            ], width=8),
-        ], style={'height':'15cm'}),
     ])
+
+
+app.layout = html.Div(
+    children=[dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+)
+
+training_callbacks(app)
 
 @app.callback(
     [dash.dependencies.Output('csv-table', 'data'), 
@@ -201,25 +181,17 @@ def update_output(n_clicks, value1, value2, value3, value4, dataset, current_src
         df = pd.read_csv('temp/sythetic_data.csv')
         return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_ids_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
-@app.callback(
-    [dash.dependencies.Output('outputnn', 'children'),
-    dash.dependencies.Output('eval_imagenn', 'src'), 
-    dash.dependencies.Output('eval_imagenn2', 'src'), 
-    dash.dependencies.Output('nnbutton', 'n_clicks')],
-    [dash.dependencies.Input('nnbutton', 'n_clicks')],
-    [dash.dependencies.State('datasetnn', 'value'),
-     dash.dependencies.State('dropdown3', 'value'),
-     dash.dependencies.State('split', 'value'),
-     dash.dependencies.State('epochs', 'value'),
-     dash.dependencies.State('eval_imagenn', 'src')
-     ],prevent_initial_call=True)
-def update_output(n_clicks, dataset, optimizer, split, epochs, current_src):
-    print(n_clicks)
-    if n_clicks == 0 :
-        return "Please enter a value and click the submit button.", current_src, n_clicks
+
+
+    # Callback to update the page content based on the URL
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def display_page(pathname):
+    if pathname == "/page1":
+        return page1_layout
+    elif pathname == "/page2":
+        return page2_layout
     else:
-        ds = eval_nn.NN(dataset, optimizer, split, epochs, n_clicks)
-        return f"NN Trained", f'assets/normal{n_clicks}.png',f'assets/syn{n_clicks}.png', n_clicks
+        return homelayout
 
 
 if __name__ == "__main__":
