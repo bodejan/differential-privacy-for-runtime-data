@@ -5,18 +5,10 @@
     Modified: 09.05.22
 """
 
-from sklearn.model_selection import train_test_split
-from keras.models import Sequential
-from keras.layers import Dense
-from sklearn import preprocessing
-from scipy.stats import entropy, ks_2samp
 
 
 import pandas as pd
 
-import matplotlib.pyplot as plt
-import plotly.express as px
-import plotly.graph_objs as go
 
 import dash
 from dash.dependencies import Output, Input, State
@@ -28,8 +20,8 @@ import dash_table
 
 import cor_data_syn 
 import ind_data_syn 
-import eval_nn  
 from training import training_callbacks, training_layout
+import eval_nn
 
 
 app = dash.Dash(
@@ -78,7 +70,7 @@ homelayout = html.Div(
                             html.Div([
                                 html.Label('Select Synthesizer'),
                                 dcc.Dropdown(
-                                    id='dropdown1',
+                                    id='synthesizer',
                                     options=[
                                         {'label': 'SDV TVAE', 'value': 'sdv'},
                                         {'label': 'Correlated DS', 'value': 'cds'},
@@ -91,7 +83,7 @@ homelayout = html.Div(
                             html.Div([
                                 html.Label('Select Dataset'),
                                 dcc.Dropdown(
-                                    id='dropdown2',
+                                    id='dataset',
                                     options=[
                                         {'label': 'C3O Kmeans', 'value': 'kmeans'},
                                         {'label': 'C3O Sort', 'value': 'sort'},
@@ -107,12 +99,12 @@ homelayout = html.Div(
                             dcc.Slider(0, 1, 0.1, value=0, id='epsilon'),
                             html.Br(),
                             html.P("Amount of Data to Generate"),
-                            dbc.Input(id = "num", type="number", value = 1000, min=10, max=100000, step=10),
+                            dbc.Input(id = "amount", type="number", value = 1000, min=10, max=100000, step=10),
                             html.Br(),
                             html.Div([                            
                                 dcc.Loading(id="loading",type="circle", 
                                 children=[
-                                html.Button('Submit', id='submit-button', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
+                                html.Button('Create', id='create-button', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
                                 html.Div(id='output')
                             ])])
 
@@ -123,9 +115,9 @@ homelayout = html.Div(
                 dbc.CardBody([
                     html.H4("Evaluation of Synthetic Data"),
                     html.P("Selected Dataset:"),
-                    dash_table.DataTable(id='csv-table', data="", columns="", page_size=10),
+                    dash_table.DataTable(id='csv-table-original', data="", columns="", page_size=10),
                     html.P("Generated Synthetic Data:"),
-                    dash_table.DataTable(id='csv-table1', data="", columns="", page_size=10),
+                    dash_table.DataTable(id='csv-table-synthetic', data="", columns="", page_size=10),
                     html.Br(),
                     html.Img(id="eval_image", src='assets/no.png', style={'height':'14cm'}),
                     ], style={'height':'100%'}))
@@ -142,44 +134,40 @@ app.layout = html.Div(
 training_callbacks(app)
 
 @app.callback(
-    [dash.dependencies.Output('csv-table', 'data'), 
-    dash.dependencies.Output('csv-table', 'columns')],
-    [dash.dependencies.Input('dropdown2', 'value')],
-    [dash.dependencies.State('dropdown2', 'value')],
+    [dash.dependencies.Output('csv-table-original', 'data'),
+    dash.dependencies.Output('csv-table-original', 'columns')],
+    [dash.dependencies.Input('dataset', 'value')],
     prevent_initial_call=True)
-def update_output(value, v2):
-    df = pd.read_csv(f'../datasets{value}.csv')
+def update_output(value):
+    df = pd.read_csv(f'../datasets/{value}.csv')
     return df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
 @app.callback(
     [dash.dependencies.Output('output', 'children'),
     dash.dependencies.Output('eval_image', 'src'), 
-    dash.dependencies.Output('submit-button', 'n_clicks'),
-    dash.dependencies.Output('csv-table1', 'data'), 
-    dash.dependencies.Output('csv-table1', 'columns')],
-    [dash.dependencies.Input('submit-button', 'n_clicks')],
-    [dash.dependencies.State('dropdown1', 'value'),
+    dash.dependencies.Output('csv-table-synthetic', 'data'),
+    dash.dependencies.Output('csv-table-synthetic', 'columns')],
+    [dash.dependencies.State('synthesizer', 'value'),
+     dash.dependencies.State('dataset', 'value'),
      dash.dependencies.State('epsilon', 'value'),
-     dash.dependencies.State('split', 'value'),
-     dash.dependencies.State('num', 'value'),
-     dash.dependencies.State('dropdown2', 'value'),
-     dash.dependencies.State('eval_image', 'src')
-     ],prevent_initial_call=True)
-def update_output(n_clicks, value1, value2, value3, value4, dataset, current_src):
+     dash.dependencies.State('amount', 'value')],
+    [dash.dependencies.Input('create-button', 'n_clicks')],prevent_initial_call=True)
+
+def update_output(synthesizer, dataset, epsilon, amount, n_clicks):
     print(n_clicks)
     if n_clicks == 0 :
-        return "Please enter a value and click the submit button.", current_src, n_clicks
-    elif value4 is None or dataset =="":
-        return "Input value is required!", current_src, n_clicks, "", ""
-    elif value1 == "cds":
-        ds = cor_data_syn.CDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets{dataset}.csv', dataset=dataset)
+        return "Please enter a value and click the submit button.", dataset, n_clicks
+    elif dataset is None or dataset =="":
+        return "Input value is required!", "", n_clicks, "", ""
+    elif synthesizer == "cds":
+        ds = cor_data_syn.CDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
-        return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
-        ds = ind_data_syn.IDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets{dataset}.csv', dataset=dataset)
+        ds = ind_data_syn.IDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
-        return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_ids_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_ids_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
 
