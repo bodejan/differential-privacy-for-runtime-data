@@ -1,1 +1,6 @@
 .DS_Store
+.idea
+.venv
+dashboard/assets/
+dashboard/temp/
+dashboard/__pycache__/
