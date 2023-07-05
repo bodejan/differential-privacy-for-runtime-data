@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 class IDS():
-    def __init__(self, epsilon: int = 0, num_tuples: int = 1000, input_data:str = "../datasets/c3o-experiments/sort.csv", dataset: str="sort"):
+    def __init__(self, epsilon: int = 0, num_tuples: int = 1000, input_data:str = "../datasets/sort.csv", dataset: str="sort"):
 
         description_file = f'temp/description.json'
         synthetic_data = f'temp/sythetic_data.csv'

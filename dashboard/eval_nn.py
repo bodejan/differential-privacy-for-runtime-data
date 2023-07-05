@@ -2,7 +2,7 @@ class NN():
     def __init__(self, dataset, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
         print("Train Model")
         # Read the given CSV file, and view some sample records
-        df = pd.read_csv(f"../datasets/c3o-experiments/{dataset}.csv")
+        df = pd.read_csv(f"../datasets{dataset}.csv")
         syndf = pd.read_csv("../dahboard/temp/sythetic_data.csv")
         df = df.drop(["machine_type" ], axis=1)
         syndf = syndf.drop(["machine_type" ], axis=1)

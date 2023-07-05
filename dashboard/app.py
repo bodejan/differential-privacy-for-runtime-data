@@ -148,7 +148,7 @@ training_callbacks(app)
     [dash.dependencies.State('dropdown2', 'value')],
     prevent_initial_call=True)
 def update_output(value, v2):
-    df = pd.read_csv(f'../datasets/c3o-experiments/{value}.csv')
+    df = pd.read_csv(f'../datasets{value}.csv')
     return df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
@@ -173,11 +173,11 @@ def update_output(n_clicks, value1, value2, value3, value4, dataset, current_src
     elif value4 is None or dataset =="":
         return "Input value is required!", current_src, n_clicks, "", ""
     elif value1 == "cds":
-        ds = cor_data_syn.CDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets/c3o-experiments/{dataset}.csv', dataset=dataset)
+        ds = cor_data_syn.CDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets{dataset}.csv', dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
         return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
-        ds = ind_data_syn.IDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets/c3o-experiments/{dataset}.csv', dataset=dataset)
+        ds = ind_data_syn.IDS(epsilon=value2, num_tuples=value4, input_data=f'../datasets{dataset}.csv', dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
         return f"You selected {value1} from menu 1 and {value2}, {value3}, {value4}, {dataset} from menu 2.", f'assets/temp_ids_{dataset}.png', n_clicks, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
