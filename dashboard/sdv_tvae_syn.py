@@ -9,10 +9,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-class CDS():
+class SDV_TVAE():
     def __init__(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
-        description_file = f'dashboard/temp/{uuid}.json'
-        synthetic_data = f'dashboard/temp/{uuid}.csv'
+
+        description_file = f'temp/{uuid}.json'
+        synthetic_data = f'temp/{uuid}.csv'
 
         # An attribute is categorical if its domain size is less than this threshold.
         # Here modify the threshold to adapt to the domain size of "education" (which is 14 in input dataset).
@@ -27,19 +28,18 @@ class CDS():
 
         # Number of tuples generated in synthetic dataset.
         print("First", epsilon, num_tuples, input_data)
-       
+        
         print("Describer")
         describer = DataDescriber(category_threshold=threshold_value)
-        describer.describe_dataset_in_correlated_attribute_mode(dataset_file=input_data, 
-                                                        epsilon=epsilon, 
-                                                        k=degree_of_bayesian_network,
-                                                        attribute_to_is_categorical=categorical_attributes,
-                                                        attribute_to_is_candidate_key=candidate_keys)
+        describer.describe_dataset_in_independent_attribute_mode(dataset_file=input_data,
+                                                         attribute_to_is_categorical=categorical_attributes,
+                                                         attribute_to_is_candidate_key=candidate_keys)
+        
         describer.save_dataset_description_to_file(description_file)
         print("save")
 
         generator = DataGenerator()
-        generator.generate_dataset_in_correlated_attribute_mode(num_tuples, description_file)
+        generator.generate_dataset_in_independent_mode(num_tuples, description_file)
         generator.save_synthetic_data(synthetic_data)
         
         print("generator")
@@ -65,6 +65,4 @@ class CDS():
         fig.autofmt_xdate()
         fig.tight_layout()
         plt.subplots_adjust(top=0.83)
-        fig.savefig(f'dashboard/assets/temp_{dataset}.png')
-
-
+        fig.savefig(f'dashboard/assets/{uuid}_{dataset}.png')

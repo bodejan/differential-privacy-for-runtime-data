@@ -15,8 +15,7 @@ import uuid
 import dash
 from dash.dependencies import Output, Input, State
 import dash_bootstrap_components as dbc
-from dash import html, dcc
-import dash_table
+from dash import html, dcc, dash_table
 
 
 
@@ -127,7 +126,7 @@ homelayout = html.Div(
                     html.P("Generated Synthetic Data:"),
                     dash_table.DataTable(id='csv-table-synthetic', data="", columns="", page_size=10),
                     html.Br(),
-                    html.Img(id="eval_image", src='assets/no.png', style={'height':'14cm'}),
+                    html.Img(id="eval_image", src='dashboard/assets/no.png', style={'height':'14cm'}),
                     ], style={'height':'100%'}))
                     ], width=8),
         ]),
@@ -158,7 +157,7 @@ def func(n_clicks):
     [dash.dependencies.Input('dataset', 'value')],
     prevent_initial_call=True)
 def update_output(value):
-    df = pd.read_csv(f'../datasets/{value}.csv')
+    df = pd.read_csv(f'datasets/{value}.csv')
     return df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
@@ -181,13 +180,13 @@ def update_output(synthesizer, dataset, epsilon, amount,session_id, n_clicks):
     elif dataset is None or dataset =="":
         return "Input value is required!", "", n_clicks, "", ""
     elif synthesizer == "cds":
-        ds = cor_data_syn.CDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id, dataset=dataset)
-        df = pd.read_csv('temp/sythetic_data.csv')
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        ds = cor_data_syn.CDS(epsilon=epsilon, num_tuples=amount, input_data=f'datasets/{dataset}.csv', uuid=session_id, dataset=dataset)
+        df = pd.read_csv('dashboard/temp/sythetic_data.csv')
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'dashboard/assets/temp_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
-        ds = ind_data_syn.IDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv',  uuid=session_id, dataset=dataset)
-        df = pd.read_csv('temp/sythetic_data.csv')
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_ids_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        ds = ind_data_syn.IDS(epsilon=epsilon, num_tuples=amount, input_data=f'datasets/{dataset}.csv',  uuid=session_id, dataset=dataset)
+        df = pd.read_csv('dashboard/temp/sythetic_data.csv')
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'dashboard/assets/temp_ids_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
 
