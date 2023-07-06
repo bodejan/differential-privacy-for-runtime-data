@@ -7,10 +7,12 @@ from scipy.stats import entropy, ks_2samp
 import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objs as go
+import plotly.graph_objects as go
+
 
 
 class NN():
-    def __init__(self, dataset, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
+    def train(self, dataset, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
         print("Train Model")
         # Read the given CSV file, and view some sample records
         df = pd.read_csv(f"../datasets/{dataset}.csv")
@@ -62,18 +64,32 @@ class NN():
           batch_size=32, epochs=epochs)
         hist = synmodel.fit(synX, synY,
           batch_size=32, epochs=epochs)
-        
+
+
         pred = model.predict(x_scaler.transform(X_test))
         synpred =synmodel.predict(synx_scaler.transform(X_test))
 
         scaled_y =y_scaler.inverse_transform(pred) 
-        synscaled_y =y_scaler.inverse_transform(synpred) 
-        
+        synscaled_y =y_scaler.inverse_transform(synpred)
+
+        def calculate_mse(prediction, truth):
+            mse = 0
+            for i in range(len(prediction)):
+                mse += (truth[i]-prediction[i])**2
+            return mse
+
+
+        def calculate_mae(prediction, truth):
+            mae = 0
+            for i in range(len(prediction)):
+                mae += abs(truth[i] - prediction[i])
+            return mae
+
+
         def plot_scatter(x_values, y_values, y_values_2, stri, s1, s2):
 
             # Create a figure and axis
             fig, ax = plt.subplots()        
-            x_values = list(range(1, len(y_values) + 1))
 
             # Plot the scatter plot
             ax.scatter(x_values, y_values, label='Predicted')
@@ -91,7 +107,26 @@ class NN():
                 ax.set_title(f'Neural Network trained with {s1} Private Data')
 
             # Show the plot
-            fig.savefig(f'assets/{stri}{n_clicks}.png')
-        
-        plot_scatter(scaled_y, scaled_y, Y_test, "normal", X.shape, synX.shape)
-        plot_scatter(synscaled_y, synscaled_y, Y_test, "syn",X.shape, synX.shape)
+            return fig
+            #fig.savefig(f'assets/{stri}{n_clicks}.png')
+
+        def plot_scatter2(y_values, y_values_2, stri, s1, s2):
+            # Create a scatter plot
+            fig = go.Figure()
+            x_values = list(range(1, len(y_values) + 1))
+
+            # Add the scatter traces for predicted and actual values
+            fig.add_trace(go.Scatter(x=x_values, y=y_values, mode='markers', name='Predicted'))
+            fig.add_trace(go.Scatter(x=x_values, y=y_values_2, mode='markers', name='Actual'))
+                  # Set the layout of the plot
+            fig.update_layout(
+                xaxis=dict(title='Datasample'),
+                yaxis=dict(title='Runtime in ms'),
+                title=f'Neural Network trained with {s2} Synthetic Data' if stri == 'syn' else f'Neural Network trained with {s1} Private Data',
+                legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+            )
+
+            return fig
+        return plot_scatter2(scaled_y, Y_test, "normal", X.shape, synX.shape), plot_scatter2(synscaled_y, Y_test, "syn",X.shape, synX.shape), calculate_mse(scaled_y, Y_test), calculate_mse(synscaled_y, Y_test), calculate_mae(scaled_y, Y_test), calculate_mae(
+                synscaled_y, Y_test)
+

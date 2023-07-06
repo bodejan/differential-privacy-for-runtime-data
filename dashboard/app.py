@@ -9,6 +9,8 @@
 
 import pandas as pd
 
+import os
+import uuid
 
 import dash
 from dash.dependencies import Output, Input, State
@@ -32,7 +34,7 @@ app.title = "Synthetic Runtime Data"
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Data Creation", href="/")),
-        dbc.NavItem(dbc.NavLink("Runtime Prediction", href="/page1")),
+        dbc.NavItem(dbc.NavLink("Runtime Prediction with neural Network", href="/page1")),
         dbc.NavItem(dbc.NavLink("", href="/page2")),
     ],
     brand="Synthetic Data for Runtime Prediction",
@@ -56,10 +58,14 @@ page2_layout = dbc.Container(
     fluid=True,
 )
 
+def session_id():
+    return str(uuid.uuid4()),
+
 
 homelayout = html.Div(
     [
         navbar,
+        html.Div(session_id(), id='session-id'),#, style={'display': 'none'}),
         html.Br(),
         dbc.Row([
             dbc.Col([
@@ -106,7 +112,9 @@ homelayout = html.Div(
                                 children=[
                                 html.Button('Create', id='create-button', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
                                 html.Div(id='output')
-                            ])])
+                            ])]),
+                            html.Button("Download Text", id="btn-download-txt"),
+                            dcc.Download(id="download-text")
 
                 ], style={'margin':"0.5cm", 'height':'100%'}))
                 ], width=4),
@@ -134,6 +142,17 @@ app.layout = html.Div(
 training_callbacks(app)
 
 @app.callback(
+    Output("download-text", "data"),
+    Input("btn-download-txt", "n_clicks"),
+    prevent_initial_call=True,
+)
+def func(n_clicks):
+    return dcc.send_file(
+        "synthetic_data.csv"
+    )
+
+
+@app.callback(
     [dash.dependencies.Output('csv-table-original', 'data'),
     dash.dependencies.Output('csv-table-original', 'columns')],
     [dash.dependencies.Input('dataset', 'value')],
@@ -151,21 +170,22 @@ def update_output(value):
     [dash.dependencies.State('synthesizer', 'value'),
      dash.dependencies.State('dataset', 'value'),
      dash.dependencies.State('epsilon', 'value'),
-     dash.dependencies.State('amount', 'value')],
+     dash.dependencies.State('amount', 'value'),
+    dash.dependencies.State('session-id', 'value')],
     [dash.dependencies.Input('create-button', 'n_clicks')],prevent_initial_call=True)
 
-def update_output(synthesizer, dataset, epsilon, amount, n_clicks):
+def update_output(synthesizer, dataset, epsilon, amount,session_id, n_clicks):
     print(n_clicks)
     if n_clicks == 0 :
         return "Please enter a value and click the submit button.", dataset, n_clicks
     elif dataset is None or dataset =="":
         return "Input value is required!", "", n_clicks, "", ""
     elif synthesizer == "cds":
-        ds = cor_data_syn.CDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', dataset=dataset)
+        ds = cor_data_syn.CDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id, dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
-        ds = ind_data_syn.IDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', dataset=dataset)
+        ds = ind_data_syn.IDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv',  uuid=session_id, dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_ids_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 

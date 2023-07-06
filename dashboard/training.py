@@ -17,6 +17,7 @@ def training_layout():
         dbc.Card(
             dbc.CardBody([
                 html.H4("Training of NN"),
+                dcc.Checklist(['Use Last Configuration'],id="use-last-config"),
                 html.Label('Select Dataset'),
                 dcc.Dropdown(
                     id='datasetnn',
@@ -32,7 +33,7 @@ def training_layout():
                 html.Div([
                     html.Label('Select Optimizer'),
                     dcc.Dropdown(
-                        id='dropdown3',
+                        id='optimizer',
                         options=[
                             {'label': 'RMSprop', 'value': 'RMSprop'},
                             {'label': 'Adagrad', 'value': 'Adagrad'},
@@ -59,9 +60,9 @@ def training_layout():
         dbc.Card(
             dbc.CardBody([
                 html.H4("Prediction Quality:"),
-                html.Img(id="eval_imagenn", src='assets/no.png', style={'height' :'14cm'}),
-                html.Img(id="eval_imagenn2", src='assets/no.png', style={'height' :'14cm'}),
-
+                dcc.Graph(id="eval_fig"),
+                dcc.Graph(id="eval_fig2"),
+                html.Div(id="metrics"),
             ])),
     ], width=8),
     ], style={'height' :'15cm'})])
@@ -70,20 +71,21 @@ def training_layout():
 def training_callbacks(app):
     @app.callback(
         [dash.dependencies.Output('outputnn', 'children'),
-         dash.dependencies.Output('eval_imagenn', 'src'),
-         dash.dependencies.Output('eval_imagenn2', 'src'),
-         dash.dependencies.Output('nnbutton', 'n_clicks')],
+         dash.dependencies.Output('eval_fig', 'figure'),
+         dash.dependencies.Output('eval_fig2', 'figure'),
+         dash.dependencies.Output('nnbutton', 'n_clicks'), dash.dependencies.Output('metrics', 'children')
+         ],
         [dash.dependencies.Input('nnbutton', 'n_clicks')],
         [dash.dependencies.State('datasetnn', 'value'),
-         dash.dependencies.State('dropdown3', 'value'),
+         dash.dependencies.State('optimizer', 'value'),
          dash.dependencies.State('split', 'value'),
          dash.dependencies.State('epochs', 'value'),
-         dash.dependencies.State('eval_imagenn', 'src')
          ], prevent_initial_call=True)
-    def update_output(n_clicks, dataset, optimizer, split, epochs, current_src):
+    def update_output(n_clicks, dataset, optimizer, split, epochs):
         print(n_clicks)
         if n_clicks == 0:
-            return "Please enter a value and click the submit button.", current_src, n_clicks
+            return "Please enter a value and click the submit button.", n_clicks
         else:
-            ds = eval_nn.NN(dataset, optimizer, split, epochs, n_clicks)
-            return f"NN Trained", f'assets/normal{n_clicks}.png', f'assets/syn{n_clicks}.png', n_clicks
+            nn = eval_nn.NN()
+            fig1, fig2, mse1, mse2, mse3, mse4 = nn.train(dataset, optimizer, split, epochs, n_clicks)
+            return f"NN Trained", fig1, fig2, n_clicks, f'{mse1}, {mse2}, {mse3}, {mse4}'

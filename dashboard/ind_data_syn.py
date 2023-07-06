@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 
 
 class IDS():
-    def __init__(self, epsilon: int = 0, num_tuples: int = 1000, input_data:str = "../datasets/sort.csv", dataset: str="sort"):
+    def __init__(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
 
-        description_file = f'temp/description.json'
-        synthetic_data = f'temp/sythetic_data.csv'
+        description_file = f'temp/{uuid}.json'
+        synthetic_data = f'temp/{uuid}.csv'
 
         # An attribute is categorical if its domain size is less than this threshold.
         # Here modify the threshold to adapt to the domain size of "education" (which is 14 in input dataset).
@@ -65,4 +65,4 @@ class IDS():
         fig.autofmt_xdate()
         fig.tight_layout()
         plt.subplots_adjust(top=0.83)
-        fig.savefig(f'assets/temp_ids_{dataset}.png')
+        fig.savefig(f'assets/{uuid}_{dataset}.png')
