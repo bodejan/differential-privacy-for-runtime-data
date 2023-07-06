@@ -2,8 +2,7 @@
 .idea
 .venv
 venv/**
-dashboard/assets/
+dashboard/assets/**
 dashboard/temp/
 dashboard/__pycache__/
-dashboard/assets/
 **/__pycache__
