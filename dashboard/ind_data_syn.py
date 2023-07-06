@@ -13,7 +13,7 @@ import plotly.subplots as sp
 
 class IDS():
     def request(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
-
+        print(input_data)
         description_file = f'dashboard/temp/{uuid}.json'
         synthetic_data = f'dashboard/temp/{uuid}.csv'
 

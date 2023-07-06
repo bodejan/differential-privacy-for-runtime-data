@@ -1,36 +1,56 @@
-from DataSynthesizer.DataGenerator import DataGenerator
 import pandas as pd
 
+from sdv.metadata import SingleTableMetadata
+from sdv.single_table import TVAESynthesizer
+from sdv.evaluation.single_table import evaluate_quality, run_diagnostic, get_column_plot
+
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 class SDV_TVAE():
-    def __init__(self,input_data:str,uuid:str, num_tuples: int = 1000, epochs: int=1500, batch_size: int=200):
+    def request(self,input_data:str,uuid:str, num_tuples: int = 1000, epochs: int=1500, batch_size: int=200):
 
         synthetic_data = f'dashboard/temp/{uuid}.csv'
+        # Read original dataset.
+        input_df = pd.read_csv(input_data)
 
         # Default config:
         configuration = {'enforce_min_max_values': True, 'enforce_rounding': True, 'epochs': epochs, 'batch_size': batch_size, 'compress_dims': [256, 256], 'decompress_dims': [256, 256], 'embedding_dim': 256, 'l2scale': 0.0001, 'loss_factor': 2}
         
-        
-        generator = DataGenerator()
-        #generator.generate_dataset_in_independent_mode(num_tuples, description_file)
-        generator.generate_dataset_sdv_tvae(num_tuples, input_data, configuration)
-        generator.save_synthetic_data(synthetic_data)
-        
-        print("generator")
+        metadata = SingleTableMetadata()
+        metadata.detect_from_dataframe(data=input_df)
+        metadata.validate()
 
-        # Read both datasets using Pandas.
-        input_df = pd.read_csv(input_data, skipinitialspace=True)
-        synthetic_df = pd.read_csv(synthetic_data)
+        synthesizer = TVAESynthesizer(
+                metadata=metadata,
+                enforce_min_max_values=configuration['enforce_min_max_values'],
+                epochs=configuration['epochs'],
+                batch_size=configuration['batch_size'],
+                compress_dims=configuration['compress_dims'],
+                decompress_dims=configuration['decompress_dims'],
+                embedding_dim=configuration['embedding_dim'],
+                l2scale=configuration['l2scale'],
+                loss_factor=configuration['loss_factor']
+            )
 
-        fig = plt.figure(figsize=(15, 6), dpi=120)
-        fig.suptitle('Pairwise Mutual Information Comparison (Private vs Synthetic)', fontsize=20)
-        ax1 = fig.add_subplot(121)
-        ax2 = fig.add_subplot(122)
-        sns.heatmap(private_mi, ax=ax1, cmap="Blues")
-        sns.heatmap(synthetic_mi, ax=ax2, cmap="Blues")
-        ax1.set_title('Private, max=1', fontsize=15)
-        ax2.set_title('Synthetic, max=1', fontsize=15)
-        fig.autofmt_xdate()
-        fig.tight_layout()
-        plt.subplots_adjust(top=0.83)
-        fig.savefig(f'dashboard/assets/{uuid}_{dataset}.png')
+        synthesizer.fit(input_df)
+        synthetic_df = synthesizer.sample(num_tuples)
+        synthetic_df.to_csv(synthetic_data, index=False)
+
+        quality_report = evaluate_quality(
+            real_data=input_df,
+            synthetic_data=synthetic_df,
+            metadata=metadata
+        )
+
+        col_shapes_plt = quality_report.get_visualization(property_name='Column Shapes')
+        col_pair_trends_plt = quality_report.get_visualization(property_name='Column Pair Trends')
+
+        # Display the combined plot
+        return col_shapes_plt, col_pair_trends_plt
+
+if __name__ == "__main__":
+    sdv_tvae= SDV_TVAE()
+    col_shapes_plt, col_pair_trends_plt = sdv_tvae.request('datasets/sort.csv', '12345') 
+    col_shapes_plt.show()
+    col_pair_trends_plt.show()
