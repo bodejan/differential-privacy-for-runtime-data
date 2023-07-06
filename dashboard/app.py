@@ -30,20 +30,12 @@ app = dash.Dash(
 )
 app.title = "Synthetic Runtime Data"
 
-navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink("Data Creation", href="/")),
-        dbc.NavItem(dbc.NavLink("Runtime Prediction with neural Network", href="/page1")),
-        dbc.NavItem(dbc.NavLink("Regression", href="/page2")),
-    ],
-    brand="Synthetic Data for Runtime Prediction",
-    color="#119dff",
-    brand_href="#",
-
-    dark=True,
+navbar = html.Div(
+    html.H1('Synthetic Data for Runtime Prediction', style={'color': 'white', 'margin': '0'}),
     style={
-        "height": "80px",
-        "line-height": "80px",
+        'background-color':'#0b1120',
+        "padding": "16px 32px",
+        "position": 'sticky'
     },
 )
 
@@ -60,82 +52,88 @@ page2_layout = dbc.Container(
 def session_id():
     return str(uuid.uuid4()),
 
+home_content = dbc.Row([
+    dbc.Col([
+        dbc.Card(
+            dbc.CardBody([
+                html.H4("Synthetisation"),
+                html.Br(),
+                html.Div([
+                    html.Label('Select Synthesizer'),
+                    dcc.Dropdown(
+                        id='synthesizer',
+                        options=[
+                            {'label': 'SDV TVAE', 'value': 'sdv'},
+                            {'label': 'Correlated DS', 'value': 'cds'},
+                            {'label': 'Independent DS', 'value': 'ids'}
+                        ],
+                        value='ids'
+                    )
+                ]),
+                html.Br(),
+                html.Div([
+                    html.Label('Select Dataset'),
+                    dcc.Dropdown(
+                        id='dataset',
+                        options=[
+                            {'label': 'C3O Kmeans', 'value': 'kmeans'},
+                            {'label': 'C3O Sort', 'value': 'sort'},
+                            {'label': 'C3O Grep', 'value': 'grep'},
+                            {'label': 'C3O SGD', 'value': 'sgd'},
+                            {'label': 'C3O Pagerank', 'value': 'pagerank'},
+                        ],
+                        value=''
+                    )
+                ]),
+                html.Br(),
+                html.P("Select Epsilon"),
+                dcc.Slider(0, 1, 0.1, value=0, id='epsilon'),
+                html.Br(),
+                html.P("Amount of Data to Generate"),
+                dbc.Input(id = "amount", type="number", value = 1000, min=10, max=100000, step=10),
+                html.Br(),
+                html.Div([
+                    dcc.Loading(id="loading",type="circle",
+                                children=[
+                                    html.Button('Create', id='create-button', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
+                                    html.Div(id='output')
+                                ])]),
+                html.Button("Download Text", id="btn-download-txt"),
+                dcc.Download(id="download-text")
 
-homelayout = html.Div(
+            ], style={'margin':"0.5cm", 'height':'100%'}))
+    ], width=4),
+    dbc.Col([
+        dbc.Card(
+            dbc.CardBody([
+                html.H4("Evaluation of Synthetic Data"),
+                html.P("Selected Dataset:"),
+                dash_table.DataTable(id='csv-table-original', data=[], columns=[], page_size=10),
+                html.P("Generated Synthetic Data:"),
+                dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
+                html.Br(),
+                dcc.Graph(id="eval_image"),
+            ], style={'height':'100%'}))
+    ], width=8),
+])
+
+layout = html.Div(
     [
         navbar,
-        html.Div(session_id(), id='session-id'),#, style={'display': 'none'}),
+        html.Div(session_id(), id='session-id', style={'display': 'none'}),
         html.Br(),
-        dbc.Row([
-            dbc.Col([
-            dbc.Card(
-                dbc.CardBody([
-                            html.H4("Synthetisation"),
-                            html.Br(),
-                            html.Div([
-                                html.Label('Select Synthesizer'),
-                                dcc.Dropdown(
-                                    id='synthesizer',
-                                    options=[
-                                        {'label': 'SDV TVAE', 'value': 'sdv'},
-                                        {'label': 'Correlated DS', 'value': 'cds'},
-                                        {'label': 'Independent DS', 'value': 'ids'}
-                                    ],
-                                    value='ids'
-                                )
-                            ]),
-                            html.Br(),
-                            html.Div([
-                                html.Label('Select Dataset'),
-                                dcc.Dropdown(
-                                    id='dataset',
-                                    options=[
-                                        {'label': 'C3O Kmeans', 'value': 'kmeans'},
-                                        {'label': 'C3O Sort', 'value': 'sort'},
-                                        {'label': 'C3O Grep', 'value': 'grep'},
-                                        {'label': 'C3O SGD', 'value': 'sgd'},
-                                        {'label': 'C3O Pagerank', 'value': 'pagerank'},
-                                    ],
-                                    value=''
-                                )
-                            ]),
-                            html.Br(),
-                            html.P("Select Epsilon"),
-                            dcc.Slider(0, 1, 0.1, value=0, id='epsilon'),
-                            html.Br(),
-                            html.P("Amount of Data to Generate"),
-                            dbc.Input(id = "amount", type="number", value = 1000, min=10, max=100000, step=10),
-                            html.Br(),
-                            html.Div([                            
-                                dcc.Loading(id="loading",type="circle", 
-                                children=[
-                                html.Button('Create', id='create-button', n_clicks=0, style={'align': 'center', 'width':'100%', 'display': 'inline-block', 'background-color': '#4CAF50', 'color': 'white'}),
-                                html.Div(id='output')
-                            ])]),
-                            html.Button("Download Text", id="btn-download-txt"),
-                            dcc.Download(id="download-text")
-
-                ], style={'margin':"0.5cm", 'height':'100%'}))
-                ], width=4),
-            dbc.Col([
-                dbc.Card(
-                dbc.CardBody([
-                    html.H4("Evaluation of Synthetic Data"),
-                    html.P("Selected Dataset:"),
-                    dash_table.DataTable(id='csv-table-original', data=[], columns=[], page_size=10),
-                    html.P("Generated Synthetic Data:"),
-                    dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
-                    html.Br(),
-                    dcc.Graph(id="eval_image"),
-                ], style={'height':'100%'}))
-                    ], width=8),
-        ]),
-
+        dbc.Tabs(
+            [
+                dbc.Tab(home_content, label='Data Creation'),
+                dbc.Tab(training_layout(), label='Runtime Prediction with NN'),
+                dbc.Tab(html.P('Hi'), label='Runtime Prediction with Regression Models')
+            ]
+        )
     ])
 
 
 app.layout = html.Div(
-    children=[dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+    children=[dcc.Location(id="url", refresh=False), layout]
 )
 
 training_callbacks(app)
@@ -190,17 +188,7 @@ def update_output(synthesizer, dataset, epsilon, amount,session_id, n_clicks):
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
-
-    # Callback to update the page content based on the URL
-@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def display_page(pathname):
-    if pathname == "/page1":
-        return page1_layout
-    elif pathname == "/page2":
-        return page2_layout
-    else:
-        return homelayout
-
-
 if __name__ == "__main__":
+    import matplotlib
+    matplotlib.use('Agg')
     app.run_server(port=8050)
