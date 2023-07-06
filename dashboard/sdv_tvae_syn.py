@@ -1,45 +1,19 @@
-
-from DataSynthesizer.lib.utils import pairwise_attributes_mutual_information, normalize_given_distribution
-from DataSynthesizer.DataDescriber import DataDescriber
 from DataSynthesizer.DataGenerator import DataGenerator
-from DataSynthesizer.ModelInspector import ModelInspector
-from DataSynthesizer.lib.utils import read_json_file, display_bayesian_network
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 
 class SDV_TVAE():
-    def __init__(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
+    def __init__(self,input_data:str,uuid:str, num_tuples: int = 1000, epochs: int=1500, batch_size: int=200):
 
-        description_file = f'temp/{uuid}.json'
-        synthetic_data = f'temp/{uuid}.csv'
+        synthetic_data = f'dashboard/temp/{uuid}.csv'
 
-        # An attribute is categorical if its domain size is less than this threshold.
-        # Here modify the threshold to adapt to the domain size of "education" (which is 14 in input dataset).
-        threshold_value = 10
-        categorical_attributes = {'machine_type': True}
-
-        # specify which attributes are candidate keys of input dataset.
-        candidate_keys = {'machine_type': False}
-
-        # The maximum number of parents in Bayesian network, i.e., the maximum number of incoming edges.
-        degree_of_bayesian_network = 2
-
-        # Number of tuples generated in synthetic dataset.
-        print("First", epsilon, num_tuples, input_data)
+        # Default config:
+        configuration = {'enforce_min_max_values': True, 'enforce_rounding': True, 'epochs': epochs, 'batch_size': batch_size, 'compress_dims': [256, 256], 'decompress_dims': [256, 256], 'embedding_dim': 256, 'l2scale': 0.0001, 'loss_factor': 2}
         
-        print("Describer")
-        describer = DataDescriber(category_threshold=threshold_value)
-        describer.describe_dataset_in_independent_attribute_mode(dataset_file=input_data,
-                                                         attribute_to_is_categorical=categorical_attributes,
-                                                         attribute_to_is_candidate_key=candidate_keys)
         
-        describer.save_dataset_description_to_file(description_file)
-        print("save")
-
         generator = DataGenerator()
-        generator.generate_dataset_in_independent_mode(num_tuples, description_file)
+        #generator.generate_dataset_in_independent_mode(num_tuples, description_file)
+        generator.generate_dataset_sdv_tvae(num_tuples, input_data, configuration)
         generator.save_synthetic_data(synthetic_data)
         
         print("generator")
@@ -47,12 +21,6 @@ class SDV_TVAE():
         # Read both datasets using Pandas.
         input_df = pd.read_csv(input_data, skipinitialspace=True)
         synthetic_df = pd.read_csv(synthetic_data)
-        # Read attribute description from the dataset description file.
-        #attribute_description = read_json_file(description_file)['attribute_description']
-
-
-        private_mi = pairwise_attributes_mutual_information(input_df)
-        synthetic_mi = pairwise_attributes_mutual_information(synthetic_df)
 
         fig = plt.figure(figsize=(15, 6), dpi=120)
         fig.suptitle('Pairwise Mutual Information Comparison (Private vs Synthetic)', fontsize=20)
