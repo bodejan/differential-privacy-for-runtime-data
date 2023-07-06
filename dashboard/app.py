@@ -35,7 +35,7 @@ navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Data Creation", href="/")),
         dbc.NavItem(dbc.NavLink("Runtime Prediction with neural Network", href="/page1")),
-        dbc.NavItem(dbc.NavLink("", href="/page2")),
+        dbc.NavItem(dbc.NavLink("Regression", href="/page2")),
     ],
     brand="Synthetic Data for Runtime Prediction",
     color="#119dff",
@@ -127,8 +127,8 @@ homelayout = html.Div(
                     html.P("Generated Synthetic Data:"),
                     dash_table.DataTable(id='csv-table-synthetic', data="", columns="", page_size=10),
                     html.Br(),
-                    html.Img(id="eval_image", src='assets/no.png', style={'height':'14cm'}),
-                    ], style={'height':'100%'}))
+                    dcc.Graph(id="eval_image"),
+                ], style={'height':'100%'}))
                     ], width=8),
         ]),
 
@@ -164,7 +164,7 @@ def update_output(value):
 
 @app.callback(
     [dash.dependencies.Output('output', 'children'),
-    dash.dependencies.Output('eval_image', 'src'), 
+    dash.dependencies.Output('eval_image', 'figure'),
     dash.dependencies.Output('csv-table-synthetic', 'data'),
     dash.dependencies.Output('csv-table-synthetic', 'columns')],
     [dash.dependencies.State('synthesizer', 'value'),
@@ -185,9 +185,10 @@ def update_output(synthesizer, dataset, epsilon, amount,session_id, n_clicks):
         df = pd.read_csv('temp/sythetic_data.csv')
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
-        ds = ind_data_syn.IDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv',  uuid=session_id, dataset=dataset)
+        ids = ind_data_syn.IDS
+        figure = ids.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv',  uuid=session_id, dataset=dataset)
         df = pd.read_csv('temp/sythetic_data.csv')
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'assets/temp_ids_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
 

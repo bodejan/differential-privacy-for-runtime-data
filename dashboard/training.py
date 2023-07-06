@@ -87,5 +87,5 @@ def training_callbacks(app):
             return "Please enter a value and click the submit button.", n_clicks
         else:
             nn = eval_nn.NN()
-            fig1, fig2, mse1, mse2, mse3, mse4 = nn.train(dataset, optimizer, split, epochs, n_clicks)
-            return f"NN Trained", fig1, fig2, n_clicks, f'{mse1}, {mse2}, {mse3}, {mse4}'
+            fig1, fig2, mse1, mse2, mse3, mse4, mse5, mse6 = nn.train(dataset, optimizer, split, epochs, n_clicks)
+            return f"NN Trained", fig1, fig2, n_clicks, f'MSE (original): {mse1}, MSE (synthetic):{mse2}, MAE(original):{mse3}, MAE (synthetic): {mse4}, MAPE (original): {mse5}, MAPE (synthetic): {mse6}'
