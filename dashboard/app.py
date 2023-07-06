@@ -123,9 +123,9 @@ homelayout = html.Div(
                 dbc.CardBody([
                     html.H4("Evaluation of Synthetic Data"),
                     html.P("Selected Dataset:"),
-                    dash_table.DataTable(id='csv-table-original', data="", columns="", page_size=10),
+                    dash_table.DataTable(id='csv-table-original', data=[], columns=[], page_size=10),
                     html.P("Generated Synthetic Data:"),
-                    dash_table.DataTable(id='csv-table-synthetic', data="", columns="", page_size=10),
+                    dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
                     html.Br(),
                     html.Img(id="eval_image", src='assets/no.png', style={'height':'14cm'}),
                     ], style={'height':'100%'}))
@@ -203,4 +203,6 @@ def display_page(pathname):
 
 
 if __name__ == "__main__":
+    import matplotlib
+    matplotlib.use('Agg')
     app.run_server(port=8050)
