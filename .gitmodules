@@ -1,6 +1,0 @@
-[submodule "data/c3o-experiments"]
-	path = data/c3o-experiments
-	url = https://github.com/dos-group/c3o-experiments
-[submodule "data/scout"]
-	path = data/scout
-	url = https://github.com/oxhead/scout

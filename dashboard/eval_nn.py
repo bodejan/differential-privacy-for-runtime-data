@@ -16,8 +16,8 @@ class NN():
     def train(self, dataset, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
         print("Train Model")
         # Read the given CSV file, and view some sample records
-        df = pd.read_csv(f"../datasets/{dataset}.csv")
-        syndf = pd.read_csv("../dashboard/temp/sythetic_data.csv")
+        df = pd.read_csv(f"datasets/{dataset}.csv")
+        syndf = pd.read_csv("dashboard/temp/sythetic_data.csv")
         df = df.drop(["machine_type" ], axis=1)
         syndf = syndf.drop(["machine_type" ], axis=1)
         dataset = df.values
@@ -115,7 +115,7 @@ class NN():
 
             # Show the plot
             return fig
-            #fig.savefig(f'assets/{stri}{n_clicks}.png')
+            #fig.savefig(f'dashboard/assets/{stri}{n_clicks}.png')
 
         def plot_scatter2(y_values, y_values_2, stri, s1, s2):
             # Create a scatter plot
