@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly.graph_objects as go
-
+import numpy as np
+from plotly.subplots import make_subplots
 
 
 class NN():
@@ -85,6 +86,12 @@ class NN():
                 mae += abs(truth[i] - prediction[i])
             return mae
 
+        def calculate_mape(prediction, truth):
+            mape = 0
+            for i in range(len(prediction)):
+                mape += np.mean(np.abs((truth[i] - prediction[i]) / truth[i])) * 100
+            return mape
+
 
         def plot_scatter(x_values, y_values, y_values_2, stri, s1, s2):
 
@@ -112,13 +119,11 @@ class NN():
 
         def plot_scatter2(y_values, y_values_2, stri, s1, s2):
             # Create a scatter plot
-            fig = go.Figure()
             x_values = list(range(1, len(y_values) + 1))
 
-            # Add the scatter traces for predicted and actual values
-            fig.add_trace(go.Scatter(x=x_values, y=y_values, mode='markers', name='Predicted'))
-            fig.add_trace(go.Scatter(x=x_values, y=y_values_2, mode='markers', name='Actual'))
-                  # Set the layout of the plot
+            # Create figure with secondary y-axis
+            fig = px.scatter(x=x_values, y=[y_values.flatten(), y_values_2.flatten()])
+
             fig.update_layout(
                 xaxis=dict(title='Datasample'),
                 yaxis=dict(title='Runtime in ms'),
@@ -128,5 +133,5 @@ class NN():
 
             return fig
         return plot_scatter2(scaled_y, Y_test, "normal", X.shape, synX.shape), plot_scatter2(synscaled_y, Y_test, "syn",X.shape, synX.shape), calculate_mse(scaled_y, Y_test), calculate_mse(synscaled_y, Y_test), calculate_mae(scaled_y, Y_test), calculate_mae(
-                synscaled_y, Y_test)
+                synscaled_y, Y_test), calculate_mape(scaled_y, Y_test), calculate_mape(synscaled_y, Y_test)
 

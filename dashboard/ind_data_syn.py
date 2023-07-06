@@ -7,10 +7,12 @@ from DataSynthesizer.lib.utils import read_json_file, display_bayesian_network
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import plotly.subplots as sp
 
 
 class IDS():
-    def __init__(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
+    def request(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
 
         description_file = f'dashboard/temp/{uuid}.json'
         synthetic_data = f'dashboard/temp/{uuid}.csv'
@@ -50,19 +52,22 @@ class IDS():
         # Read attribute description from the dataset description file.
         #attribute_description = read_json_file(description_file)['attribute_description']
 
-
+        # Calculate mutual information
         private_mi = pairwise_attributes_mutual_information(input_df)
         synthetic_mi = pairwise_attributes_mutual_information(synthetic_df)
 
-        fig = plt.figure(figsize=(15, 6), dpi=120)
-        fig.suptitle('Pairwise Mutual Information Comparison (Private vs Synthetic)', fontsize=20)
-        ax1 = fig.add_subplot(121)
-        ax2 = fig.add_subplot(122)
-        sns.heatmap(private_mi, ax=ax1, cmap="Blues")
-        sns.heatmap(synthetic_mi, ax=ax2, cmap="Blues")
-        ax1.set_title('Private, max=1', fontsize=15)
-        ax2.set_title('Synthetic, max=1', fontsize=15)
-        fig.autofmt_xdate()
-        fig.tight_layout()
-        plt.subplots_adjust(top=0.83)
-        fig.savefig(f'dashboard/assets/{uuid}_{dataset}.png')
+        # Create subplots
+        fig = sp.make_subplots(rows=1, cols=2, subplot_titles=("Private, max=1", "Synthetic, max=1"))
+
+        # Add heatmaps
+        fig.add_trace(go.Heatmap(z=private_mi, colorscale="Blues"), row=1, col=1)
+        fig.add_trace(go.Heatmap(z=synthetic_mi, colorscale="Blues"), row=1, col=2)
+
+        # Update layout
+        fig.update_layout(
+            title="Pairwise Mutual Information Comparison (Private vs Synthetic)",
+            width=900,
+            height=400,
+            showlegend=False
+        )
+        return fig
