@@ -51,6 +51,6 @@ class SDV_TVAE():
 
 if __name__ == "__main__":
     sdv_tvae= SDV_TVAE()
-    col_shapes_plt, col_pair_trends_plt = sdv_tvae.request('datasets/sort.csv', '12345') 
+    col_shapes_plt, col_pair_trends_plt = sdv_tvae.request('datasets/sort.csv', 'sort_synthetic_123') 
     col_shapes_plt.show()
     col_pair_trends_plt.show()
