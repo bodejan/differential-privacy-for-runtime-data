@@ -23,7 +23,7 @@ import cor_data_syn
 import ind_data_syn
 import sdv_tvae_syn
 from training_app import training_callbacks, training_layout
-from regression_app import regression_layout
+from regression_app import regression_layout, regression_callbacks
 import eval_nn
 
 
@@ -115,6 +115,9 @@ home_content = dbc.Row([
                 dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
                 html.Br(),
                 dcc.Graph(id="eval_image"),
+                dcc.Graph(id="eval_image2"),
+                dcc.Graph(id="eval_image3"),
+
             ], style={'height':'100%'}))
     ], width=8),
 ])
@@ -135,6 +138,7 @@ app.layout= html.Div(
 
 
 training_callbacks(app)
+regression_callbacks(app)
 
 @app.callback(
     Output("download-text", "data"),
@@ -161,8 +165,10 @@ def update_output(value):
 
 @app.callback(
     [dash.dependencies.Output('output', 'children'),
-    dash.dependencies.Output('eval_image', 'src'), 
-    dash.dependencies.Output('csv-table-synthetic', 'data'),
+    dash.dependencies.Output('eval_image', 'figure'),
+     dash.dependencies.Output('eval_image2', 'figure'),
+     dash.dependencies.Output('eval_image3', 'figure'),
+     dash.dependencies.Output('csv-table-synthetic', 'data'),
     dash.dependencies.Output('csv-table-synthetic', 'columns')],
     [dash.dependencies.State('synthesizer', 'value'),
      dash.dependencies.State('dataset', 'value'),
@@ -185,18 +191,19 @@ def update_output(synthesizer, dataset, epsilon, amount, session_id_val, n_click
         df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
         col_shapes_plt.show()
         col_pair_trends_plt.show()
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", col_shapes_plt, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.",[], col_shapes_plt, col_pair_trends_plt, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     elif synthesizer == "cds":
         print("ID", session_id_val)
-        ds = cor_data_syn.CDS(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id_val[0], dataset=dataset)
-        df = pd.read_csv(f'dashboard/temp/{session_id_val[0]}.csv')
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", f'../dashboard/assets/temp_{dataset}.png', df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        cds = cor_data_syn.CDS()
+        figure = cds.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id_val[0], dataset=dataset)
+        df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure,[], [], df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
         print("ID", session_id_val)
         ids = ind_data_syn.IDS()
         figure = ids.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id_val[0], dataset=dataset, )
         df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure,[],[], df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
 
 
 if __name__ == "__main__":
