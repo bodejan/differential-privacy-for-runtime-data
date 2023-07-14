@@ -10,10 +10,10 @@ from plotly.subplots import make_subplots
 class SDV_TVAE():
     def request(self,input_data:str,uuid:str, num_tuples: int = 1000, epochs: int=1500, batch_size: int=200):
 
-        synthetic_data = f'dashboard/temp/{uuid}.csv'
+        synthetic_data = f'temp/{uuid}.csv'
         # Read original dataset.
         input_df = pd.read_csv(input_data)
-
+        print(input_df)
         # Default config:
         configuration = {'enforce_min_max_values': True, 'enforce_rounding': True, 'epochs': epochs, 'batch_size': batch_size, 'compress_dims': [256, 256], 'decompress_dims': [256, 256], 'embedding_dim': 256, 'l2scale': 0.0001, 'loss_factor': 2}
         
@@ -32,8 +32,11 @@ class SDV_TVAE():
                 l2scale=configuration['l2scale'],
                 loss_factor=configuration['loss_factor']
             )
+        print("fit sdv")
 
         synthesizer.fit(input_df)
+        print("fitted sdv")
+
         synthetic_df = synthesizer.sample(num_tuples)
         synthetic_df.to_csv(synthetic_data, index=False)
 
