@@ -17,19 +17,7 @@ def training_layout():
         dbc.Card(
             dbc.CardBody([
                 html.H4("Training of NN"),
-                dcc.Checklist(['Use Last Configuration'],id="use-last-config"),
-                html.Label('Select Dataset'),
-                dcc.Dropdown(
-                    id='datasetnn',
-                    options=[
-                        {'label': 'C3O Kmeans', 'value': 'kmeans'},
-                        {'label': 'C3O Sort', 'value': 'sort'},
-                        {'label': 'C3O Grep', 'value': 'grep'},
-                        {'label': 'C3O SGD', 'value': 'sgd'},
-                        {'label': 'C3O Pagerank', 'value': 'pagerank'},
-                    ],
-                    value=''
-                ),
+
                 html.Div([
                     html.Label('Select Optimizer'),
                     dcc.Dropdown(
@@ -76,16 +64,18 @@ def training_callbacks(app):
          dash.dependencies.Output('nnbutton', 'n_clicks'), dash.dependencies.Output('metrics', 'children')
          ],
         [dash.dependencies.Input('nnbutton', 'n_clicks')],
-        [dash.dependencies.State('datasetnn', 'value'),
+        [dash.dependencies.State('dataset', 'value'),
          dash.dependencies.State('optimizer', 'value'),
          dash.dependencies.State('split', 'value'),
          dash.dependencies.State('epochs', 'value'),
+         dash.dependencies.State('session-id', 'children'),
+
          ], prevent_initial_call=True)
-    def update_output(n_clicks, dataset, optimizer, split, epochs):
+    def update_output(n_clicks, dataset, optimizer, split, epochs, uuid):
         print(n_clicks)
         if n_clicks == 0:
             return "Please enter a value and click the submit button.", n_clicks
         else:
             nn = eval_nn.NN()
-            fig1, fig2, mse1, mse2, mse3, mse4, mse5, mse6 = nn.train(dataset, optimizer, split, epochs, n_clicks)
+            fig1, fig2, mse1, mse2, mse3, mse4, mse5, mse6 = nn.train(dataset, uuid[0], optimizer, split, epochs, n_clicks)
             return f"NN Trained", fig1, fig2, n_clicks, f'MSE (original): {mse1}, MSE (synthetic):{mse2}, MAE(original):{mse3}, MAE (synthetic): {mse4}, MAPE (original): {mse5}, MAPE (synthetic): {mse6}'
