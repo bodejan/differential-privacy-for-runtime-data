@@ -94,12 +94,12 @@ home_content = dbc.Row([
                                     html.Div(id='output')
                                 ])]),
                 html.Div([
-                    dcc.Loading(id="loading2", type="circle",
+                    dcc.Loading(id="loadingdownload", type="circle",
                                 children=[
                                     html.Button('Download File', id='btn-download-txt', n_clicks=0,
                                                 style={'align': 'center', 'width': '100%', 'display': 'inline-block',
                                                        'background-color': '#4CAF50', 'color': 'white'}),
-                                    html.Div(id='output')
+                                    html.Div(id='output-download')
                                 ])]),
                 dcc.Download(id="download-text")
 
@@ -180,7 +180,8 @@ def update_output(synthesizer, dataset, epsilon, amount, session_id_val, n_click
     elif synthesizer == "sdv":
         print("Called SDV synthesizer")
         sdv_tvae = sdv_tvae_syn.SDV_TVAE()
-        col_shapes_plt, col_pair_trends_plt = sdv_tvae.request('../datasets/sort.csv', 'sort_synthetic_123')
+        col_shapes_plt, col_pair_trends_plt = sdv_tvae.request(f'../datasets/{dataset}.tsv', session_id_val[0],amount, 10, 10 )
+        print("Finished sdv")
         df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
         col_shapes_plt.show()
         col_pair_trends_plt.show()
