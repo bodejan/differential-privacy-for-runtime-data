@@ -13,11 +13,11 @@ from plotly.subplots import make_subplots
 
 
 class NN():
-    def train(self, dataset, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
+    def train(self, dataset, uuid, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
         print("Train Model")
         # Read the given CSV file, and view some sample records
         df = pd.read_csv(f"../datasets/{dataset}.csv")
-        syndf = pd.read_csv("../dashboard/temp/sythetic_data.csv")
+        syndf = pd.read_csv(f'../dashboard/temp/{uuid}.csv')
         df = df.drop(["machine_type" ], axis=1)
         syndf = syndf.drop(["machine_type" ], axis=1)
         dataset = df.values
