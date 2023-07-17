@@ -1,19 +1,17 @@
-
-from DataSynthesizer.lib.utils import pairwise_attributes_mutual_information, normalize_given_distribution
-from DataSynthesizer.DataDescriber import DataDescriber
-from DataSynthesizer.DataGenerator import DataGenerator
-from DataSynthesizer.ModelInspector import ModelInspector
-from DataSynthesizer.lib.utils import read_json_file, display_bayesian_network
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.subplots as sp
+from DataSynthesizer.DataDescriber import DataDescriber
+from DataSynthesizer.DataGenerator import DataGenerator
+from DataSynthesizer.lib.utils import pairwise_attributes_mutual_information
 
-class CDS():
-    def request(self,input_data:str,uuid:str, epsilon: int = 0, num_tuples: int = 1000,  dataset: str="sort"):
-        description_file = f'temp/{uuid}.json'
-        synthetic_data = f'temp/{uuid}.csv'
+from synthesizer import Synthesizer
+
+
+class CorrelatedDataSynthesizer(Synthesizer):
+    def request(self, epsilon: int = 0, num_tuples: int = 1000, dataset: str = "sort", **_):
+        description_file = f'temp/{self._session_id}.json'
+        synthetic_data = f'temp/{self._session_id}.csv'
 
         # An attribute is categorical if its domain size is less than this threshold.
         # Here modify the threshold to adapt to the domain size of "education" (which is 14 in input dataset).
@@ -27,32 +25,32 @@ class CDS():
         degree_of_bayesian_network = 2
 
         # Number of tuples generated in synthetic dataset.
-        print("First", epsilon, num_tuples, input_data)
-       
+        print("First", epsilon, num_tuples, self._input_data)
+
         print("Describer")
         describer = DataDescriber(category_threshold=threshold_value)
-        describer.describe_dataset_in_correlated_attribute_mode(dataset_file=input_data, 
-                                                        epsilon=epsilon, 
-                                                        k=degree_of_bayesian_network,
-                                                        attribute_to_is_categorical=categorical_attributes,
-                                                        attribute_to_is_candidate_key=candidate_keys)
+        describer.describe_dataset_in_correlated_attribute_mode(dataset_file=self._input_data,
+                                                                epsilon=epsilon,
+                                                                k=degree_of_bayesian_network,
+                                                                attribute_to_is_categorical=categorical_attributes,
+                                                                attribute_to_is_candidate_key=candidate_keys)
         describer.save_dataset_description_to_file(description_file)
         print("save")
 
         generator = DataGenerator()
         generator.generate_dataset_in_correlated_attribute_mode(num_tuples, description_file)
         generator.save_synthetic_data(synthetic_data)
-        
+
         print("generator")
 
         # Read both datasets using Pandas.
-        input_df = pd.read_csv(input_data, skipinitialspace=True)
+        input_df = pd.read_csv(self._input_data, skipinitialspace=True)
         synthetic_df = pd.read_csv(synthetic_data)
         # Read attribute description from the dataset description file.
-        #attribute_description = read_json_file(description_file)['attribute_description']
+        # attribute_description = read_json_file(description_file)['attribute_description']
 
         # Read both datasets using Pandas.
-        input_df = pd.read_csv(input_data, skipinitialspace=True)
+        input_df = pd.read_csv(self._input_data, skipinitialspace=True)
         synthetic_df = pd.read_csv(synthetic_data)
         # Read attribute description from the dataset description file.
         # attribute_description = read_json_file(description_file)['attribute_description']
@@ -76,4 +74,3 @@ class CDS():
             showlegend=False
         )
         return fig
-
