@@ -286,6 +286,5 @@ def get_synthesizer_for_name(name: str):
 
 if __name__ == "__main__":
     import matplotlib
-
     matplotlib.use('Agg')
-    app.run_server(port=8050)
+    app.run(host='0.0.0.0', port=8050)
