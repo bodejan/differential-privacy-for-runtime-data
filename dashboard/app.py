@@ -5,27 +5,20 @@
     Modified: 09.05.22
 """
 
-
-
-import pandas as pd
-
-import os
 import uuid
 
 import dash
-from dash.dependencies import Output, Input, State
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import html, dcc, dash_table
+from dash.dependencies import Output, Input, State
 
-
-
-import cor_data_syn 
+import cor_data_syn
 import ind_data_syn
 import sdv_tvae_syn
-from training_app import training_callbacks, training_layout
+from meta_information import MetaInformation
 from regression_app import regression_layout, regression_callbacks
-import eval_nn
-
+from training_app import training_callbacks, training_layout
 
 app = dash.Dash(
     __name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True,
@@ -179,6 +172,7 @@ def update_output(value):
 
 def update_output(synthesizer, dataset, epsilon, amount, session_id_val, n_clicks):
     print(n_clicks)
+    session_id = session_id_val[0]
     if n_clicks == 0 :
         return "Please enter a value and click the submit button.",None, dataset, None
     elif dataset is None or dataset =="":
@@ -186,25 +180,27 @@ def update_output(synthesizer, dataset, epsilon, amount, session_id_val, n_click
     elif synthesizer == "sdv":
         print("Called SDV synthesizer")
         sdv_tvae = sdv_tvae_syn.SDV_TVAE()
-        col_shapes_plt, col_pair_trends_plt = sdv_tvae.request(f'../datasets/{dataset}.tsv', session_id_val[0],amount, 10, 10 )
+        col_shapes_plt, col_pair_trends_plt = sdv_tvae.request(f'../datasets/{dataset}.tsv', session_id, amount, 10, 10)
         print("Finished sdv")
-        df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
+        df = pd.read_csv(f'temp/{session_id}.csv')
         col_shapes_plt.show()
         col_pair_trends_plt.show()
+        MetaInformation(id=session_id, dataset_name=dataset).save()
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.",[], col_shapes_plt, col_pair_trends_plt, df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     elif synthesizer == "cds":
         print("ID", session_id_val)
         cds = cor_data_syn.CDS()
-        figure = cds.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id_val[0], dataset=dataset)
-        df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
+        figure = cds.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id, dataset=dataset)
+        df = pd.read_csv(f'temp/{session_id}.csv')
+        MetaInformation(id=session_id, dataset_name=dataset).save()
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure,[], [], df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
     else:
         print("ID", session_id_val)
         ids = ind_data_syn.IDS()
-        figure = ids.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id_val[0], dataset=dataset, )
-        df = pd.read_csv(f'temp/{session_id_val[0]}.csv')
+        figure = ids.request(epsilon=epsilon, num_tuples=amount, input_data=f'../datasets/{dataset}.csv', uuid=session_id, dataset=dataset, )
+        df = pd.read_csv(f'temp/{session_id}.csv')
+        MetaInformation(id=session_id, dataset_name=dataset).save()
         return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", figure,[],[], df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
-
 
 if __name__ == "__main__":
     import matplotlib

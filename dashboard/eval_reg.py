@@ -16,24 +16,26 @@ from sklearn.base import RegressorMixin, BaseEstimator
 
 
 class Regression():
-    def eval_input_data(input_data):
-        def get_training_data(input_data):
-            def get_features_filters(input_data):
-                if 'sort' in input_data:
+
+    @staticmethod
+    def eval_input_data(input_file: str, dataset_name: str):
+        def get_training_data():
+            def get_features_filters():
+                if dataset_name == 'sort':
                     return ['data_size_MB'], [('machine_type', '==', 'c4.2xlarge'),('line_length', '==', 100)]
-                elif 'grep' in input_data:
+                elif dataset_name == 'grep':
                     return ['data_size_MB', 'p_occurrence'], [('machine_type', '==', 'm4.2xlarge')]
-                elif 'sgd' in input_data:
+                elif dataset_name == 'sgd':
                     return ['observations', 'features', 'iterations'],[('machine_type', '==', 'r4.2xlarge'),('instance_count', '>', 2)]
-                elif 'kmeans' in input_data:
+                elif dataset_name=='kmeans':
                     return ['observations', 'features', 'k'],[('machine_type', '==', 'r4.2xlarge'),('instance_count', '>', 2)]
-                elif 'page' or 'rank' in input_data:
+                elif dataset_name == 'page' or dataset_name == 'rank':
                     return ['links', 'pages', 'convergence_criterion'], [('machine_type', '==', 'r4.2xlarge')]
                 else:
                     return None
 
-            features, filters = get_features_filters(input_data)
-            input_df = pd.read_csv(input_data)
+            features, filters = get_features_filters()
+            input_df = pd.read_csv(input_file)
             g = input_df.groupby(by=['instance_count','machine_type']+features)
             input_df = pd.DataFrame(g.median().to_records())
             # Apply filters
@@ -69,7 +71,7 @@ class Regression():
             return mse, std, mape
         
 
-        X,y = get_training_data(input_data)
+        X,y = get_training_data()
         results = []
         model_names = ['GradientBoosting', 'ErnestModel', 'OptimisticGradientBoosting','BasicOptimisticModel']
         models = init_models()
