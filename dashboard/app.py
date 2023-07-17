@@ -205,7 +205,7 @@ def show_synthesizer_options(synthesizer_name: str):
             html.Br(),
             html.Div([
                 html.Label('Epochs'),
-                dbc.Input(id="epochs", type="number", value=10, min=10, max=100000, step=10),
+                dbc.Input(id="epochs", type="number", value=1500, min=10, max=100000, step=10),
             ]),
             html.Br(),
             html.Div([
