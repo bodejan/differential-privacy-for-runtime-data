@@ -31,9 +31,7 @@ class SDVSynthesizer(Synthesizer):
                          'batch_size': batch_size, 'compress_dims': compress_dims, 'decompress_dims': decompress_dims,
                          'embedding_dim': 256, 'l2scale': 0.0001, 'loss_factor': 2}
 
-
-
-        print(configuration)
+        print('TVAE configuration: ', configuration)
         metadata = SingleTableMetadata()
         metadata.detect_from_dataframe(data=input_df)
         metadata.validate()

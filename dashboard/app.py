@@ -163,11 +163,10 @@ def update_output(value):
     [dash.dependencies.Input('synthesizer', 'value')],
 )
 def show_synthesizer_options(synthesizer_name: str):
-    print(synthesizer_name)
     if synthesizer_name == 'sdv':
         return [html.Div([
             html.Div([
-                html.Label('Compress dims'),
+                html.Label('Compress dimensions'),
                 dcc.Dropdown(
                     id='compress_dims',
                     options=[
@@ -178,8 +177,9 @@ def show_synthesizer_options(synthesizer_name: str):
                     value='256'
                 )
             ]),
+            html.Br(),
             html.Div([
-                html.Label('decompress_dims'),
+                html.Label('Decompress dimensions'),
                 dcc.Dropdown(
                     id='decompress_dims',
                     options=[
@@ -190,6 +190,7 @@ def show_synthesizer_options(synthesizer_name: str):
                     value='256'
                 )
             ]),
+            html.Br(),
             html.Div([
                 html.Label('Enforce min-max values'),
                 dcc.Dropdown(
@@ -201,20 +202,21 @@ def show_synthesizer_options(synthesizer_name: str):
                     value='true'
                 )
             ]),
+            html.Br(),
             html.Div([
                 html.Label('Epochs'),
                 dbc.Input(id="epochs", type="number", value=10, min=10, max=100000, step=10),
             ]),
+            html.Br(),
             html.Div([
                 html.Label('Batch size'),
                 dbc.Input(id="batch_size", type="number", value=200, min=100, max=1000, step=100),
             ]),
-
             dcc.Input(id='epsilon', style={'display': 'none'}),
         ])]
     else:
         return [html.Div([
-            dcc.Input(id='enforce_min_max', style={'display': 'none'}),
+            dcc.Input(id='enforce_min_max_values', style={'display': 'none'}),
             dcc.Input(id='decompress_dims', style={'display': 'none'}),
             dcc.Input(id='compress_dims', style={'display': 'none'}),
             dcc.Input(id='epochs', style={'display': 'none'}),
@@ -254,9 +256,9 @@ def update_output(default_inputs, sdv_options, n_clicks):
     print(n_clicks)
     session_id = session_id_val[0]
     if n_clicks == 0:
-        return "Please enter a value and click the submit button.", None, dataset, None
+        return "Please enter a value and click the submit button.", None, None, None, [], []
     elif dataset is None or dataset == "":
-        return "Input value is required!", None, None, None
+        return "Input value is required!", None, None, None, [], []
 
     print(f'Using synthesizer: {synthesizer_name}')
     synthesizer: Synthesizer = get_synthesizer_for_name(synthesizer_name)(f'../datasets/{dataset}.csv', session_id)
@@ -266,12 +268,10 @@ def update_output(default_inputs, sdv_options, n_clicks):
 
     if isinstance(result, tuple):  # sdv synthesizer returns a tuple
         col_shapes_plt, col_pair_trends_plt = result
-        col_shapes_plt.show()
-        col_pair_trends_plt.show()
-        return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", [], col_shapes_plt, col_pair_trends_plt, df.to_dict(
+        return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", [], col_shapes_plt, col_pair_trends_plt, df.to_dict(
             'records'), [{'name': col, 'id': col} for col in df.columns]
 
-    return f"You selected {synthesizer}, {dataset}, {epsilon}, {amount}.", result, [], [], df.to_dict('records'), [
+    return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", result, [], [], df.to_dict('records'), [
         {'name': col, 'id': col} for col in df.columns]
 
 
