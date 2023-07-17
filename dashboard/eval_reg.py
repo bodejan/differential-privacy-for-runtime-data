@@ -62,7 +62,7 @@ class Regression():
             return gb, em, ogb, bom
 
         def pred(model, X, y, test_size: float=0.1):
-            X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=test_size)
+            X_tr, X_te, y_tr, y_te = train_test_split(X, y, random_state=42, test_size=test_size)
             model.fit(X_tr, y_tr)
             y_hat = model.predict(X_te)
             errors = (y_hat - y_te).to_numpy()
@@ -176,6 +176,7 @@ class GradientBoosting(BaseEstimator, RegressorMixin):
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
         regressor = GradientBoostingRegressor(learning_rate=self.learning_rate,
+                                              random_state=42,
                                               n_estimators=self.n_estimators)
         estimator = Pipeline(steps=[
                 ('ss', StandardScaler()),
