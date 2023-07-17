@@ -30,12 +30,10 @@ def regression_layout():
                         dbc.CardBody([
                             html.H4("Evaluation using Regression Methods"),
                             html.Div([
-                                dcc.Loading(id="loading-5", type="circle",
+                                dcc.Loading(id="loading-5", type="default",
                                             children=[
-                                                html.Button('Submit', id='regbutton', n_clicks=0,
-                                                            style={'align': 'center', 'width': '100%',
-                                                                   'display': 'inline-block',
-                                                                   'background-color': '#4CAF50', 'color': 'white'}),
+                                                dbc.Button('Submit', id='regbutton', n_clicks=0,
+                                                           style={'width': '100%'}),
                                                 html.Div(id='outputreg')
                                             ])])
                         ]))], width=4),
@@ -79,7 +77,8 @@ def regression_callbacks(app):
         print("Regression")
 
         original_results = postprocess_results(
-            eval_reg.Regression.eval_input_data(input_file=f'../datasets/{meta.dataset_name}.csv', dataset_name=meta.dataset_name)
+            eval_reg.Regression.eval_input_data(input_file=f'../datasets/{meta.dataset_name}.csv',
+                                                dataset_name=meta.dataset_name)
         )
         synthetic_results = postprocess_results(
             eval_reg.Regression.eval_input_data(input_file=f'temp/{session_id}.csv', dataset_name=meta.dataset_name)

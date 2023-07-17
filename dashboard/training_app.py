@@ -38,12 +38,10 @@ def training_layout():
                             ]),
                             html.Br(),
                             html.Div([
-                                dcc.Loading(id="loading2", type="circle",
+                                dcc.Loading(id="loading2", type="default",
                                             children=[
-                                                html.Button('Submit', id='nnbutton', n_clicks=0,
-                                                            style={'align': 'center', 'width': '100%',
-                                                                   'display': 'inline-block',
-                                                                   'background-color': '#4CAF50', 'color': 'white'}),
+                                                dbc.Button('Submit', id='nnbutton', n_clicks=0,
+                                                            style={'width': '100%'}),
                                                 html.Div(id='outputnn')
                                             ])])
                         ], style={'margin': "0.5cm"}))

@@ -40,82 +40,83 @@ def session_id():
     return str(uuid.uuid4()),
 
 
-home_content = dbc.Row([
+home_content = html.Div([
     html.Br(),
-    dbc.Col([
-        dbc.Card(
-            dbc.CardBody([
-                html.H4("Synthetisation"),
-                html.Br(),
-                html.Div([
-                    html.Label('Select Synthesizer'),
-                    dcc.Dropdown(
-                        id='synthesizer',
-                        options=[
-                            {'label': 'SDV TVAE', 'value': 'sdv'},
-                            {'label': 'Correlated DS', 'value': 'cds'},
-                            {'label': 'Independent DS', 'value': 'ids'}
-                        ],
-                        value='ids'
-                    )
-                ]),
-                html.Br(),
-                html.Div([
-                    html.Label('Select Dataset'),
-                    dcc.Dropdown(
-                        id='dataset',
-                        options=[
-                            {'label': 'C3O Kmeans', 'value': 'kmeans'},
-                            {'label': 'C3O Sort', 'value': 'sort'},
-                            {'label': 'C3O Grep', 'value': 'grep'},
-                            {'label': 'C3O SGD', 'value': 'sgd'},
-                            {'label': 'C3O Pagerank', 'value': 'pagerank'},
-                        ],
-                        value=''
-                    )
-                ]),
-                html.Br(),
-                html.Div(id='specific_options'),
-                html.Br(),
-                html.P("Amount of Data to Generate"),
-                dbc.Input(id="amount", type="number", value=1000, min=10, max=100000, step=10),
-                html.Br(),
-                html.Div([
-                    dcc.Loading(id="loading", type="circle",
-                                children=[
-                                    html.Button('Create', id='create-button', n_clicks=0,
-                                                style={'align': 'center', 'width': '100%', 'display': 'inline-block',
-                                                       'background-color': '#4CAF50', 'color': 'white'}),
-                                    html.Div(id='output')
-                                ])]),
-                html.Div([
-                    dcc.Loading(id="loadingdownload", type="circle",
-                                children=[
-                                    html.Button('Download File', id='btn-download-txt', n_clicks=0,
-                                                style={'align': 'center', 'width': '100%', 'display': 'inline-block',
-                                                       'background-color': '#4CAF50', 'color': 'white'}),
-                                    html.Div(id='output-download')
-                                ])]),
-                dcc.Download(id="download-text")
+    dbc.Row([
+        dbc.Col([
+            dbc.Card(
+                dbc.CardBody([
+                    html.H4("Synthetisation"),
+                    html.Br(),
+                    html.Div([
+                        html.Label('Select Synthesizer'),
+                        dcc.Dropdown(
+                            id='synthesizer',
+                            options=[
+                                {'label': 'SDV TVAE', 'value': 'sdv'},
+                                {'label': 'Correlated DS', 'value': 'cds'},
+                                {'label': 'Independent DS', 'value': 'ids'}
+                            ],
+                            value='ids'
+                        )
+                    ]),
+                    html.Br(),
+                    html.Div([
+                        html.Label('Select Dataset'),
+                        dcc.Dropdown(
+                            id='dataset',
+                            options=[
+                                {'label': 'C3O Kmeans', 'value': 'kmeans'},
+                                {'label': 'C3O Sort', 'value': 'sort'},
+                                {'label': 'C3O Grep', 'value': 'grep'},
+                                {'label': 'C3O SGD', 'value': 'sgd'},
+                                {'label': 'C3O Pagerank', 'value': 'pagerank'},
+                            ],
+                            value=''
+                        )
+                    ]),
+                    html.Br(),
+                    html.Div(id='specific_options'),
+                    html.Br(),
+                    html.P("Amount of Data to Generate"),
+                    dbc.Input(id="amount", type="number", value=1000, min=10, max=100000, step=10),
+                    html.Br(),
+                    html.Div([
+                        dcc.Loading(id="loading", type="default",
+                                    children=[
+                                        dbc.Button('Create', id='create-button', n_clicks=0, style={'width': '100%'}),
+                                        html.Div(id='output')
+                                    ])]),
+                    html.Div([
+                        dcc.Loading(id="loadingdownload",
+                                    type="default",
+                                    children=[
+                                        dbc.Button('Download File', id='btn-download-txt', n_clicks=0,
+                                                   style={'width': '100%'}),
+                                        html.Div(id='output-download')
+                                    ])], style={'margin-top': '8px'}),
+                    dcc.Download(id="download-text")
 
-            ], style={'marginLeft': "0.5cm", 'height': '100%'}))
-    ], width=4),
-    dbc.Col([
-        dbc.Card(
-            dbc.CardBody([
-                html.H4("Evaluation of Synthetic Data"),
-                html.P("Selected Dataset:"),
-                dash_table.DataTable(id='csv-table-original', data=[], columns=[], page_size=10),
-                html.P("Generated Synthetic Data:"),
-                dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
-                html.Br(),
-                dcc.Graph(id="eval_image"),
-                dcc.Graph(id="eval_image2"),
-                dcc.Graph(id="eval_image3"),
+                ], style={'marginLeft': "0.5cm", 'height': '100%'}))
+        ], width=4),
+        dbc.Col([
+            dbc.Card(
+                dbc.CardBody([
+                    html.H4("Evaluation of Synthetic Data"),
+                    html.P("Selected Dataset:"),
+                    dash_table.DataTable(id='csv-table-original', data=[], columns=[], page_size=10),
+                    html.P("Generated Synthetic Data:"),
+                    dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
+                    html.Br(),
+                    dcc.Graph(id="eval_image"),
+                    dcc.Graph(id="eval_image2"),
+                    dcc.Graph(id="eval_image3"),
 
-            ], style={'height': '100%'}))
-    ], width=8),
-])
+                ], style={'height': '100%'}))
+        ], width=8),
+    ])
+]
+)
 
 app.layout = html.Div(
     [
@@ -286,5 +287,6 @@ def get_synthesizer_for_name(name: str):
 
 if __name__ == "__main__":
     import matplotlib
+
     matplotlib.use('Agg')
     app.run(host='0.0.0.0', port=8050)
