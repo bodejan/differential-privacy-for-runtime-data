@@ -29,6 +29,10 @@ def regression_layout():
                     dbc.Card(
                         dbc.CardBody([
                             html.H4("Evaluation using Regression Methods"),
+                            html.Br(),
+                            html.P("Select Test/Train Split"),
+                            dcc.Slider(30, 90, 5, value=70, id='reg_split'),
+                            html.Br(),
                             html.Div([
                                 dcc.Loading(id="loading-5", type="default",
                                             children=[
@@ -67,21 +71,21 @@ def regression_callbacks(app):
             dash.dependencies.Output('regression_results_synthetic', 'data'),
             dash.dependencies.Output('outputreg', 'children'),
         ],
-        [dash.dependencies.Input('regbutton', 'n_clicks')],
+        [dash.dependencies.Input('regbutton', 'n_clicks'), dash.dependencies.State('reg_split', 'value') ],
         [dash.dependencies.State('session-id', 'children')],
         prevent_initial_call=True
     )
-    def update_output(n_clicks, uuid: list[str]):
+    def update_output(n_clicks, split, uuid: list[str]):
         session_id = uuid[0]
         meta = MetaInformation.from_id_file(session_id)
         print("Regression")
 
         original_results = postprocess_results(
             eval_reg.Regression.eval_input_data(input_file=f'../datasets/{meta.dataset_name}.csv',
-                                                dataset_name=meta.dataset_name)
+                                                dataset_name=meta.dataset_name, split=split/100)
         )
         synthetic_results = postprocess_results(
-            eval_reg.Regression.eval_input_data(input_file=f'temp/{session_id}.csv', dataset_name=meta.dataset_name)
+            eval_reg.Regression.eval_input_data(input_file=f'temp/{session_id}.csv', dataset_name=meta.dataset_name, split=split/100)
         )
 
         return [

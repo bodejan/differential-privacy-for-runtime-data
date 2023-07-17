@@ -1,6 +1,3 @@
-
-
-
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
@@ -18,17 +15,19 @@ from sklearn.base import RegressorMixin, BaseEstimator
 class Regression():
 
     @staticmethod
-    def eval_input_data(input_file: str, dataset_name: str):
+    def eval_input_data(input_file: str, dataset_name: str, split):
         def get_training_data():
             def get_features_filters():
                 if dataset_name == 'sort':
-                    return ['data_size_MB'], [('machine_type', '==', 'c4.2xlarge'),('line_length', '==', 100)]
+                    return ['data_size_MB'], [('machine_type', '==', 'c4.2xlarge'), ('line_length', '==', 100)]
                 elif dataset_name == 'grep':
                     return ['data_size_MB', 'p_occurrence'], [('machine_type', '==', 'm4.2xlarge')]
                 elif dataset_name == 'sgd':
-                    return ['observations', 'features', 'iterations'],[('machine_type', '==', 'r4.2xlarge'),('instance_count', '>', 2)]
-                elif dataset_name=='kmeans':
-                    return ['observations', 'features', 'k'],[('machine_type', '==', 'r4.2xlarge'),('instance_count', '>', 2)]
+                    return ['observations', 'features', 'iterations'], [('machine_type', '==', 'r4.2xlarge'),
+                                                                        ('instance_count', '>', 2)]
+                elif dataset_name == 'kmeans':
+                    return ['observations', 'features', 'k'], [('machine_type', '==', 'r4.2xlarge'),
+                                                               ('instance_count', '>', 2)]
                 elif dataset_name == 'page' or dataset_name == 'rank':
                     return ['links', 'pages', 'convergence_criterion'], [('machine_type', '==', 'r4.2xlarge')]
                 else:
@@ -36,24 +35,24 @@ class Regression():
 
             features, filters = get_features_filters()
             input_df = pd.read_csv(input_file)
-            g = input_df.groupby(by=['instance_count','machine_type']+features)
+            g = input_df.groupby(by=['instance_count', 'machine_type'] + features)
             input_df = pd.DataFrame(g.median().to_records())
             # Apply filters
             # e.g. only for one machine type each, the full c3o-experiments were conducted
             # No full cartesian product!
             for k, s, v in filters:
                 if s == '==': input_df = input_df[input_df[k] == v]
-                if s == '>' : input_df = input_df[input_df[k] >  v]
+                if s == '>': input_df = input_df[input_df[k] > v]
             X = input_df[['instance_count'] + features]
             y = (input_df[['gross_runtime']]).squeeze()
             return X, y
-        
+
         def init_models():
             # default models
             # GradientBoostingRegressor 
             gb = GradientBoosting()
             # Model for performance predictions using 'nnls'
-            em = ErnestModel()  
+            em = ErnestModel()
             # custom models
             # ibm & ssm: GradientBoosting
             ogb = OptimisticGradientBoosting()
@@ -61,27 +60,26 @@ class Regression():
             bom = BasicOptimisticModel()
             return gb, em, ogb, bom
 
-        def pred(model, X, y, test_size: float=0.1):
+        def pred(model, X, y, test_size: float = 0.1):
             X_tr, X_te, y_tr, y_te = train_test_split(X, y, random_state=42, test_size=test_size)
             model.fit(X_tr, y_tr)
             y_hat = model.predict(X_te)
             errors = (y_hat - y_te).to_numpy()
-            mse, std = errors.mean()**2, errors.std()
+            mse, std = errors.mean() ** 2, errors.std()
             mape = np.mean(np.abs(errors / y_te)) * 100
             return mse, std, mape
-        
 
-        X,y = get_training_data()
+        X, y = get_training_data()
         results = []
-        model_names = ['GradientBoosting', 'ErnestModel', 'OptimisticGradientBoosting','BasicOptimisticModel']
+        model_names = ['GradientBoosting', 'ErnestModel', 'OptimisticGradientBoosting', 'BasicOptimisticModel']
         models = init_models()
         for model_name, model in zip(model_names, models):
-            mse, std, mape = pred(model, X, y)
+            mse, std, mape = pred(model, X, y, 1 - split)
             result = {'name': model_name, 'mse': mse, 'std': std, 'mape': mape}
             results.append(result)
-            #print(f'Predicting {model_name}: {result}')
+            # print(f'Predicting {model_name}: {result}')
         return results
-    
+
 
 class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
 
@@ -92,13 +90,13 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
 
     def preprocess(self, X, y):
         # Find biggest group of same features besides instance_count to learn from
-        Xy = np.concatenate((X, y.reshape(-1,1)), axis=1)
+        Xy = np.concatenate((X, y.reshape(-1, 1)), axis=1)
         features = pd.DataFrame(Xy)
         indices = list(range(len(X[0])))
         indices.remove(self.instance_count_index)
         groups = features.groupby(by=indices)
-        max_group = sorted(groups, key=lambda x:len(x[1]))[-1][1]
-        X = max_group.iloc[:, 0].to_numpy().reshape((-1,1))
+        max_group = sorted(groups, key=lambda x: len(x[1]))[-1][1]
+        X = max_group.iloc[:, 0].to_numpy().reshape((-1, 1))
         y = max_group.iloc[:, -1]
         return X, y
 
@@ -107,7 +105,7 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
             X, y = self.preprocess(X, y)
 
         self.min, self.max = X.min(), X.max()
-        self.regressor.fit(X,y)
+        self.regressor.fit(X, y)
 
     def predict(self, X):
         rt_for_min_scaleout = self.regressor.predict(np.array([[self.min]]))
@@ -116,35 +114,35 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
         # Replace scale-outs of more than self.max with pred for self.max
         # (poly3 curve does not continue as desired)
         rt[X.flatten() > self.max] = self.regressor.predict(np.array([[self.max]]))
-        return (rt/rt_for_min_scaleout).flatten()
+        return (rt / rt_for_min_scaleout).flatten()
 
 
 class OptimisticModel(BaseEstimator, RegressorMixin):
 
     def __init__(self, ibm, ssm):
-        self.ssm= SSModel(regressor=ssm)
-        self.ibm= ibm
+        self.ssm = SSModel(regressor=ssm)
+        self.ibm = ibm
 
     def fit(self, X, y):
         X, y = np.array(X), np.array(y)
         self.instance_count_index = 0
         # Train scale-out speed-up model
         self.ssm.fit(X, y)
-        scales = self.ssm.predict(X[:,[self.instance_count_index]])
-        #print('scales', scales.shape)
+        scales = self.ssm.predict(X[:, [self.instance_count_index]])
+        # print('scales', scales.shape)
         # Project all runtimes to expected runtimes at scaleout = min_scaleout
-        y_projection = y/scales
-        #print('yproj', y_projection.shape)
+        y_projection = y / scales
+        # print('yproj', y_projection.shape)
         # Train the inputs-behavior model on all inputs (not the instance_count)
         inputs = [i for i in range(X.shape[1]) if i != self.instance_count_index] or [0]
-        self.ibm.fit(X[:,inputs], y_projection)
+        self.ibm.fit(X[:, inputs], y_projection)
 
     def predict(self, X):
         X = np.array(X)
         instance_count = X[:, [self.instance_count_index]]
         inputs = list([i for i in range(X.shape[1]) if i != self.instance_count_index])
         m1 = self.ssm.predict(instance_count).flatten()
-        m2 = self.ibm.predict(X[:,inputs]).flatten()
+        m2 = self.ibm.predict(X[:, inputs]).flatten()
         y_pred = m1 * m2
         return y_pred
 
@@ -179,8 +177,8 @@ class GradientBoosting(BaseEstimator, RegressorMixin):
                                               random_state=42,
                                               n_estimators=self.n_estimators)
         estimator = Pipeline(steps=[
-                ('ss', StandardScaler()),
-                ('gb', regressor) ])
+            ('ss', StandardScaler()),
+            ('gb', regressor)])
 
         self.fit = estimator.fit
         self.predict = estimator.predict
@@ -190,11 +188,11 @@ class ErnestModel(BaseEstimator, RegressorMixin):
 
     def _fmap(self, x):
         x = np.array(x)
-        scaleout, problem_size = x[:,0], x[:,1]
+        scaleout, problem_size = x[:, 0], x[:, 1]
         return np.c_[np.ones_like(scaleout),
-                     problem_size/scaleout,
-                     np.log(scaleout),
-                     scaleout]
+        problem_size / scaleout,
+        np.log(scaleout),
+        scaleout]
 
     def fit(self, x, y):
         X = self._fmap(x)
