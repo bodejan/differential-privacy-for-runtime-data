@@ -121,7 +121,7 @@ home_content = html.Div([
 app.layout = html.Div(
     [
         navbar,
-        html.Div(session_id(), id='session-id'),  # style={'display': 'none'}),
+        html.Div(session_id(), id='session-id', style={'display': 'none'}),
         html.Br(),
         dbc.Tabs(
             [
