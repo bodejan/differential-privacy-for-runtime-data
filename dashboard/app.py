@@ -251,9 +251,9 @@ def update_output(default_inputs, sdv_options, n_clicks):
     synthesizer_name, dataset, epsilon, amount, session_id_val = default_inputs
     session_id = session_id_val[0]
     if n_clicks == 0:
-        return "Please enter a value and click the submit button.", None, None, [], []
+        return "Please enter a value and click the submit button.", None, None, []
     elif dataset is None or dataset == "":
-        return "Input value is required!", None, None, [], [] #[], [],[]
+        return "Input value is required!", None, None, [] #[], [],[]
     print(f'Using synthesizer: {synthesizer_name}')
     synthesizer: Synthesizer = get_synthesizer_for_name(synthesizer_name)(f'../datasets/{dataset}.csv', session_id)
     result = synthesizer.request(epsilon=epsilon, num_tuples=amount, dataset=dataset, **sdv_options)
@@ -264,9 +264,9 @@ def update_output(default_inputs, sdv_options, n_clicks):
     if isinstance(result, tuple):  # sdv synthesizer returns a tuple
         col_shapes_plt, col_pair_trends_plt = result
         return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", col_shapes_plt, col_pair_trends_plt, synthetic_df.to_dict(
-            'records'), []
+            'records')
 
-    return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", result, [], synthetic_df.to_dict('records'),
+    return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", result, [], synthetic_df.to_dict('records')
 
 
 
