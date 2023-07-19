@@ -228,7 +228,7 @@ def show_synthesizer_options(synthesizer_name: str):
     [dash.dependencies.Output('output', 'children'),
      dash.dependencies.Output('eval_image', 'figure'),
      dash.dependencies.Output('eval_image2', 'figure'),
-     dash.dependencies.Output('csv-table-synthetic', 'data'),
+     dash.dependencies.Output('csv-table-synthetic', 'data')],
     dict(
         default_inputs=[
             dash.dependencies.State('synthesizer', 'value'),
