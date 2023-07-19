@@ -122,16 +122,19 @@ class NN():
             x_values = list(range(1, len(y_values) + 1))
 
             # Create figure with secondary y-axis
-            fig = px.scatter(x=x_values, y=[y_values.flatten(), y_values_2.flatten()])
+            df =  {'x': x_values, 'True Labels':y_values.flatten() , 'Predicted': y_values_2.flatten()}
+            fig = px.scatter(df, x='x', y=['True Labels', 'Predicted'])
 
             fig.update_layout(
                 xaxis=dict(title='Datasample'),
                 yaxis=dict(title='Runtime in ms'),
+                legend_title="Legend Title",
                 title=f'Neural Network trained with {s2} Synthetic Data' if stri == 'syn' else f'Neural Network trained with {s1} Private Data',
                 legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
             )
 
             return fig
+
         return plot_scatter2(scaled_y, Y_test, "normal", X.shape, synX.shape), plot_scatter2(synscaled_y, Y_test, "syn",X.shape, synX.shape), calculate_mse(scaled_y, Y_test), calculate_mse(synscaled_y, Y_test), calculate_mae(scaled_y, Y_test), calculate_mae(
                 synscaled_y, Y_test), calculate_mape(scaled_y, Y_test), calculate_mape(synscaled_y, Y_test)
 
