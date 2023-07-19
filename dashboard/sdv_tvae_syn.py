@@ -24,7 +24,7 @@ class SDVSynthesizer(Synthesizer):
         synthetic_data = f'temp/{self._session_id}.csv'
         # Read original dataset.
         input_df = pd.read_csv(self._input_data)
-        print(input_df)
+        #print(input_df)
 
         # Default config:
         configuration = {'enforce_min_max_values': enforce_min_max_values, 'enforce_rounding': True, 'epochs': epochs,
@@ -64,7 +64,6 @@ class SDVSynthesizer(Synthesizer):
         col_shapes_plt = quality_report.get_visualization(property_name='Column Shapes')
         col_pair_trends_plt = quality_report.get_visualization(property_name='Column Pair Trends')
 
-        # Display the combined plot
         return col_shapes_plt, col_pair_trends_plt
 
 
