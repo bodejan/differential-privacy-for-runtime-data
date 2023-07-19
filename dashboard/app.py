@@ -104,14 +104,12 @@ home_content = html.Div([
                 dbc.CardBody([
                     html.H4("Evaluation of Synthetic Data"),
                     html.P("Selected Dataset:"),
-                    dash_table.DataTable(id='csv-table-original', data=[], columns=[], page_size=10),
+                    dash_table.DataTable(id='csv-table-original', data=[], page_size=10),
                     html.P("Generated Synthetic Data:"),
-                    dash_table.DataTable(id='csv-table-synthetic', data=[], columns=[], page_size=10),
+                    dash_table.DataTable(id='csv-table-synthetic', data=[], page_size=10),
                     html.Br(),
                     dcc.Graph(id="eval_image"),
                     dcc.Graph(id="eval_image2"),
-                    dcc.Graph(id="eval_image3"),
-
                 ], style={'height': '100%'}))
         ], width=8),
     ])
@@ -149,14 +147,13 @@ def func(session_id, n_clicks):
 
 
 @app.callback(
-    [dash.dependencies.Output('csv-table-original', 'data'),
-     dash.dependencies.Output('csv-table-original', 'columns')],
+    [dash.dependencies.Output('csv-table-original', 'data')],
     [dash.dependencies.Input('dataset', 'value')
      ],
     prevent_initial_call=True)
 def update_output(value):
     df = pd.read_csv(f'../datasets/{value}.csv')
-    return df.to_dict('records'), [{'name': col, 'id': col} for col in df.columns]
+    return [df.to_dict('records')]
 
 
 @app.callback(
@@ -231,9 +228,7 @@ def show_synthesizer_options(synthesizer_name: str):
     [dash.dependencies.Output('output', 'children'),
      dash.dependencies.Output('eval_image', 'figure'),
      dash.dependencies.Output('eval_image2', 'figure'),
-     dash.dependencies.Output('eval_image3', 'figure'),
      dash.dependencies.Output('csv-table-synthetic', 'data'),
-     dash.dependencies.Output('csv-table-synthetic', 'columns')],
     dict(
         default_inputs=[
             dash.dependencies.State('synthesizer', 'value'),
@@ -254,26 +249,25 @@ def show_synthesizer_options(synthesizer_name: str):
     , prevent_initial_call=True)
 def update_output(default_inputs, sdv_options, n_clicks):
     synthesizer_name, dataset, epsilon, amount, session_id_val = default_inputs
-    print(n_clicks)
     session_id = session_id_val[0]
     if n_clicks == 0:
-        return "Please enter a value and click the submit button.", None, None, None, [], []
+        return "Please enter a value and click the submit button.", None, None, [], []
     elif dataset is None or dataset == "":
-        return "Input value is required!", None, None, None, [], []
-
+        return "Input value is required!", None, None, [], [] #[], [],[]
     print(f'Using synthesizer: {synthesizer_name}')
     synthesizer: Synthesizer = get_synthesizer_for_name(synthesizer_name)(f'../datasets/{dataset}.csv', session_id)
     result = synthesizer.request(epsilon=epsilon, num_tuples=amount, dataset=dataset, **sdv_options)
-    df = pd.read_csv(f'temp/{session_id}.csv')
+    synthetic_df = pd.read_csv(f'temp/{session_id}.csv')
+
     MetaInformation(id=session_id, dataset_name=dataset).save()
 
     if isinstance(result, tuple):  # sdv synthesizer returns a tuple
         col_shapes_plt, col_pair_trends_plt = result
-        return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", [], col_shapes_plt, col_pair_trends_plt, df.to_dict(
-            'records'), [{'name': col, 'id': col} for col in df.columns]
+        return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", col_shapes_plt, col_pair_trends_plt, synthetic_df.to_dict(
+            'records'), []
 
-    return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", result, [], [], df.to_dict('records'), [
-        {'name': col, 'id': col} for col in df.columns]
+    return f"You selected {synthesizer_name}, {dataset}, {epsilon}, {amount}.", result, [], synthetic_df.to_dict('records'),
+
 
 
 def get_synthesizer_for_name(name: str):
