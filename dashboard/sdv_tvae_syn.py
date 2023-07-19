@@ -27,7 +27,7 @@ class SDVSynthesizer(Synthesizer):
         print(input_df)
 
         # Default config:
-        configuration = {'enforce_min_max_values': True, 'enforce_rounding': True, 'epochs': epochs,
+        configuration = {'enforce_min_max_values': enforce_min_max_values, 'enforce_rounding': True, 'epochs': epochs,
                          'batch_size': batch_size, 'compress_dims': compress_dims, 'decompress_dims': decompress_dims,
                          'embedding_dim': 256, 'l2scale': 0.0001, 'loss_factor': 2}
 

@@ -200,7 +200,7 @@ def show_synthesizer_options(synthesizer_name: str):
                         {'label': 'True', 'value': True},
                         {'label': 'False', 'value': False},
                     ],
-                    value='true'
+                    value='True'
                 )
             ]),
             html.Br(),
