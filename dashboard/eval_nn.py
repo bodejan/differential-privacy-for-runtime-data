@@ -122,8 +122,8 @@ class NN():
             x_values = list(range(1, len(y_values) + 1))
 
             # Create figure with secondary y-axis
-            df =  {'x': x_values, 'True Labels':y_values.flatten() , 'Predicted': y_values_2.flatten()}
-            fig = px.scatter(df, x='x', y=['True Labels', 'Predicted'])
+            df =  {'x': x_values, 'Predicted':y_values.flatten() , 'True Labels': y_values_2.flatten()}
+            fig = px.scatter(df, x='x', y=['Predicted', 'True Labels'])
 
             fig.update_layout(
                 xaxis=dict(title='Datasample'),
