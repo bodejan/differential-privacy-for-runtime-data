@@ -3,13 +3,10 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn import preprocessing
-from scipy.stats import entropy, ks_2samp
-import matplotlib.pyplot as plt
+
 import plotly.express as px
-import plotly.graph_objs as go
-import plotly.graph_objects as go
+
 import numpy as np
-from plotly.subplots import make_subplots
 
 
 class NN():
@@ -135,53 +132,32 @@ class NN():
             return mape
 
 
-        def plot_scatter(x_values, y_values, y_values_2, stri, s1, s2):
+        def plot_scatter(predicted_values, true_values, mode: str="syn", num_private: int = 0, num_synthetic: int = 0):
             """
-            Create Scatte plot to visualize difference between predicted and true values
+            Create Scatter plot to visualize difference between predicted and true values
 
-            :param x_values:
-            :param y_values:
-            :param y_values_2:
-            :param stri:
-            :param s1:
-            :param s2:
-            :return:
+            :param predicted_values: Predicted Runtimes
+            :param true_values: True runtimes
+            :param mode: Should the plot show synthetic or private data
+            :param num_private: Number of private Samples to train the model
+            :param num_synthetic: Number of Normal Samples to train the model
+            :return: Figure of scatter plot
             """
-            fig, ax = plt.subplots()
+            x_values = list(range(1, len(predicted_values) + 1))
 
-            # Plot the scatter plot
-            ax.scatter(x_values, y_values, label='Predicted')
-            ax.scatter(x_values, y_values_2, label='Actual')
-
-            ax.set_xlabel('Datasample')
-            ax.set_ylabel('Runtime in ms')
-            ax.legend()
-
-            if stri == "syn":
-                ax.set_title(f'Neural Network trained with {s2} Synthetic Data')
-            else: 
-                ax.set_title(f'Neural Network trained with {s1} Private Data')
-
-            return fig
-
-        def plot_scatter2(y_values, y_values_2, stri, s1, s2):
-            # Create a scatter plot
-            x_values = list(range(1, len(y_values) + 1))
-
-            # Create figure with secondary y-axis
-            df =  {'x': x_values, 'Predicted':y_values.flatten() , 'True Labels': y_values_2.flatten()}
+            df =  {'x': x_values, 'Predicted':predicted_values.flatten() , 'True Labels': true_values.flatten()}
             fig = px.scatter(df, x='x', y=['Predicted', 'True Labels'])
 
             fig.update_layout(
                 xaxis=dict(title='Datasample'),
                 yaxis=dict(title='Runtime in ms'),
                 legend_title="Legend Title",
-                title=f'Neural Network trained with {s2} Synthetic Data' if stri == 'syn' else f'Neural Network trained with {s1} Private Data',
+                title=f'Neural Network trained with {num_synthetic} Synthetic Data' if mode == 'syn' else f'Neural Network trained with {num_private} Private Data',
                 legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
             )
 
             return fig
 
-        return plot_scatter2(scaled_y, Y_test, "normal", X.shape, synX.shape), plot_scatter2(synscaled_y, Y_test, "syn",X.shape, synX.shape), calculate_mse(scaled_y, Y_test), calculate_mse(synscaled_y, Y_test), calculate_mae(scaled_y, Y_test), calculate_mae(
+        return plot_scatter(scaled_y, Y_test, "normal", X.shape, synX.shape), plot_scatter(synscaled_y, Y_test, "syn",X.shape, synX.shape), calculate_mse(scaled_y, Y_test), calculate_mse(synscaled_y, Y_test), calculate_mae(scaled_y, Y_test), calculate_mae(
                 synscaled_y, Y_test), calculate_mape(scaled_y, Y_test), calculate_mape(synscaled_y, Y_test)
 
