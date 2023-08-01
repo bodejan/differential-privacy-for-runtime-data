@@ -83,7 +83,7 @@ def training_callbacks(app):
         else:
             nn = eval_nn.NN()
             fig1, fig2, mse_original, mse_synthetic, mae_original, mae_synthetic, mape_original, mape_synthetic = nn.train(
-                dataset, uuid[0], optimizer, split, epochs, n_clicks)
+                dataset, uuid[0], optimizer, split, epochs)
 
             data = [
                 {'Name': 'MSE', 'Original': mse_original, 'Synthetic': mse_synthetic},

@@ -13,37 +13,58 @@ from plotly.subplots import make_subplots
 
 
 class NN():
-    def train(self, dataset, uuid, optimizer, split: int = 70, epochs: int = 10, n_clicks: int = 0):
-        print("Train Model")
-        # Read the given CSV file, and view some sample records
+    """
+    Class containing the neural network
+    """
+    def train(self, dataset, uuid, optimizer, split: int = 70, epochs: int = 10):
+        """
+
+        :param dataset: Dataset that was used for creating the synthetic data
+        :param uuid: UUID to get access to the created synthetic data
+        :param optimizer: Optimizer that should be used for training the NN
+        :param split: Percentage of data used for training
+        :param epochs: Epochs used in training
+        :return: Multiple figures and metrics for evaluation of the performance of the trained NN
+        """
+
+        # Read in necessary files
         df = pd.read_csv(f"../datasets/{dataset}.csv")
         syndf = pd.read_csv(f'../dashboard/temp/{uuid}.csv')
+
+        # for now, ignore machine type in training
         df = df.drop(["machine_type" ], axis=1)
         syndf = syndf.drop(["machine_type" ], axis=1)
+
+        # get values from dataframe
         dataset = df.values
         syndataset = syndf.values
 
+        # split the dataset rows
         X = dataset[:,0:7]
         Y = dataset[:,-1]
         synX = syndataset[:,0:7]
         synY = syndataset[:,-1]
 
+        # conduct preprocessing on normal and synthetic data
         x_scaler = preprocessing.StandardScaler()
         y_scaler = preprocessing.StandardScaler()
         synx_scaler = preprocessing.StandardScaler()
         syny_scaler = preprocessing.StandardScaler()
         
-        print("finished standard Model")
-
+        # make train test split from normal data
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=1-(0.01*split))
 
 
+        # fit the scaler for the normal data for preprocessing
         X = x_scaler.fit_transform(X_train)
         Y= y_scaler.fit_transform(Y_train.reshape(-1, 1) )
-        
+
+        # fit the scaler for the synthetic data for preprocessing
         synX = synx_scaler.fit_transform(synX)
         synY= syny_scaler.fit_transform(synY.reshape(-1, 1) )
-        
+
+
+        #create two simple models to train and predict with
         model = Sequential([
             Dense(32, input_shape=(7,)),
             Dense(1)
@@ -52,8 +73,8 @@ class NN():
             Dense(32, input_shape=(7,)),
             Dense(1)
         ])
-        print("Compiled standard Model")
 
+        # compile models
         model.compile(optimizer=optimizer,
               loss='mae',
               metrics=['accuracy'])
@@ -61,19 +82,28 @@ class NN():
               loss='mae',
               metrics=['accuracy'])
 
-        hist = model.fit(X, Y,
+        # fit models
+        _ = model.fit(X, Y,
           batch_size=32, epochs=epochs)
-        hist = synmodel.fit(synX, synY,
+        _ = synmodel.fit(synX, synY,
           batch_size=32, epochs=epochs)
 
-
+        # predict the runtime for samples in test dataset
         pred = model.predict(x_scaler.transform(X_test))
-        synpred =synmodel.predict(synx_scaler.transform(X_test))
+        synpred = synmodel.predict(synx_scaler.transform(X_test))
 
+        # scale runtime predictions back in to normal seconds
         scaled_y =y_scaler.inverse_transform(pred) 
         synscaled_y =y_scaler.inverse_transform(synpred)
 
+
         def calculate_mse(prediction, truth):
+            """
+            Function to calculate mean squared error
+            :param prediction: Array with predicted values
+            :param truth: Array with the true values
+            :return: MSE
+            """
             mse = 0
             for i in range(len(prediction)):
                 mse += (truth[i]-prediction[i])**2
@@ -81,12 +111,24 @@ class NN():
 
 
         def calculate_mae(prediction, truth):
+            """
+            Function to calculate mean absolut error
+            :param prediction: Array with predicted values
+            :param truth: Array with true values
+            :return: MAE
+            """
             mae = 0
             for i in range(len(prediction)):
                 mae += abs(truth[i] - prediction[i])
             return mae
 
         def calculate_mape(prediction, truth):
+            """
+            Function to calculate mean absolut percentage error
+            :param prediction: Array with predicted values
+            :param truth: Array with true values
+            :return: MAPE
+            """
             mape = 0
             for i in range(len(prediction)):
                 mape += np.mean(np.abs((truth[i] - prediction[i]) / truth[i])) * 100
@@ -94,28 +136,33 @@ class NN():
 
 
         def plot_scatter(x_values, y_values, y_values_2, stri, s1, s2):
+            """
+            Create Scatte plot to visualize difference between predicted and true values
 
-            # Create a figure and axis
-            fig, ax = plt.subplots()        
+            :param x_values:
+            :param y_values:
+            :param y_values_2:
+            :param stri:
+            :param s1:
+            :param s2:
+            :return:
+            """
+            fig, ax = plt.subplots()
 
             # Plot the scatter plot
             ax.scatter(x_values, y_values, label='Predicted')
             ax.scatter(x_values, y_values_2, label='Actual')
 
-
-            # Set labels for x and y axes
             ax.set_xlabel('Datasample')
             ax.set_ylabel('Runtime in ms')
             ax.legend()
-            # Set a title for the plot
+
             if stri == "syn":
                 ax.set_title(f'Neural Network trained with {s2} Synthetic Data')
             else: 
                 ax.set_title(f'Neural Network trained with {s1} Private Data')
 
-            # Show the plot
             return fig
-            #fig.savefig(f'dashboard/assets/{stri}{n_clicks}.png')
 
         def plot_scatter2(y_values, y_values_2, stri, s1, s2):
             # Create a scatter plot
