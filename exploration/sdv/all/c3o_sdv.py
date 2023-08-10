@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sdv.metadata import SingleTableMetadata
 from sdv.lite import SingleTablePreset
@@ -10,7 +11,9 @@ from plotly.subplots import make_subplots
 def gen_synthetic_data(file, sample_size):
     reports = []
     # import data
-    data = pd.read_csv(f'synthetic_data/c3o_sdv/c3o_data/{file}.tsv', sep='\t')
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(script_directory, f'c3o_data/{file}.tsv')
+    data = pd.read_csv(path, sep='\t')
     # print(data.head())
     
     # detect metadata & validate metadata
@@ -28,7 +31,9 @@ def gen_synthetic_data(file, sample_size):
 
         # create synthetic sample 
         synthetic_data = s.sample(num_rows = sample_size)
-        synthetic_data.to_csv(f'synthetic_data/c3o_sdv/c3o_data_synthetic/{file}/{file}_{s.__class__.__name__}.tsv', sep='\t')
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(script_directory, f'c3o_data_synthetic/{file}/{file}_{s.__class__.__name__}.tsv')
+        synthetic_data.to_csv(path, sep='\t')
 
         # evaluate
         quality_report = evaluate_quality(
@@ -56,7 +61,9 @@ def write_results(file_reports):
             row.append(report['file'])
             row.append(report['class'])
             row.append(report['quality_report'].get_score())
-            with open('synthetic_data/c3o_sdv/results.csv', 'a', newline='') as f:
+            script_directory = os.path.dirname(os.path.abspath(__file__))
+            path = os.path.join(script_directory, 'results.csv')
+            with open(path, 'a', newline='') as f:
                 writer = csv.writer(f)
                 if f.tell() == 0:
                     writer.writerow(['file', 'model', 'score'])
