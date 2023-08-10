@@ -30,7 +30,9 @@ def grid_search():
     # Import data
     # For now we focus on only one file: grep.tsv
     file = 'grep'
-    data = pd.read_csv(f'synthetic_data/sdv/c3o_data/{file}.tsv', sep='\t')
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(script_directory, f"c3o_data/{file}.tsv")
+    data = pd.read_csv(path, sep='\t')
     #print(data)
 
     # Create metadata
@@ -60,7 +62,9 @@ def grid_search():
 
     result.extend(processed_results)
 
-    with open('synthetic_data/sdv/result_c3o.json', 'w') as file:
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(script_directory, 'result_c3o.json')
+    with open(path, 'w') as file:
         json.dump(result, file)
 
 
@@ -79,7 +83,9 @@ def process_combination(index, combination, data, metadata, grid_combinations_di
         )
         synthesizer.fit(data)
         # Define path to avoid errors in parallelization
-        synthetic_data = synthesizer.sample(num_rows=1000, output_file_path=f'synthetic_data/sdv/sample/{index}');
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(script_directory, f'sample/{index}')
+        synthetic_data = synthesizer.sample(num_rows=1000, output_file_path=path);
 
         quality_report = evaluate_quality(
             real_data=data,
@@ -89,7 +95,7 @@ def process_combination(index, combination, data, metadata, grid_combinations_di
         )
         score = quality_report.get_score()
         print(f'{index+1}/{grid_combinations_dict_len}: {score}')
-        os.remove(f'synthetic_data/sdv/sample/{index}')
+        os.remove(path)
         combination.pop('metadata')
         return {'combination': combination, 'score': score}
     except Exception as e:
@@ -100,7 +106,9 @@ def process_combination(index, combination, data, metadata, grid_combinations_di
 
 def top10_config_for_file(file):
     # Load the JSON file
-    with open('synthetic_data/sdv/c3o_TVAE_grep.json', 'r') as f:
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(script_directory, 'c3o_TVAE_grep.json')
+    with open(path, 'r') as f:
         data = json.load(f)
 
     # Extract the score and configuration for each configuration
@@ -118,7 +126,9 @@ def top10_config_for_file(file):
     #print(top_10_configurations)
 
     # Import data
-    data = pd.read_csv(f'synthetic_data/sdv/c3o_data/{file}.tsv', sep='\t')
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(script_directory, f"c3o_data/{file}.tsv")
+    data = pd.read_csv(path, sep='\t')
         
     # Create metadata
     metadata = SingleTableMetadata()
@@ -179,7 +189,9 @@ def top10_config_for_all_files():
 
     # Print the DataFrame
     print(df)
-    df.to_csv('synthetic_data/sdv/c3o_TVAE_top10.csv')
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(script_directory, 'c3o_TVAE_top10.csv')
+    df.to_csv(path)
 
 top10_config_for_all_files()
 
