@@ -28,7 +28,7 @@ After successfully building the Docker image, you can run the Docker container w
 ```docker run -p 8050:8050 app```
 
 
-
+_Note: [CUDA](https://developer.nvidia.com/how-to-cuda-python) unavailable when using Docker. This may lead to significantly longer training times._
 
 
 
@@ -43,3 +43,7 @@ After successfully building the Docker image, you can run the Docker container w
     2.b. Mac: ```source venv/bin/activate```
 
 3. Install requirements: ```pip install -r requirements.txt```
+
+4. Navigate to dashboard folder: ```cd dashboard```
+
+5. Run app.py: ```python app.py```
