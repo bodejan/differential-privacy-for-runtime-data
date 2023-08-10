@@ -15,8 +15,9 @@ from sklearn.base import RegressorMixin, BaseEstimator
 class Regression():
 
     @staticmethod
-    def eval_input_data(input_file: str, dataset_name: str, split):
-        def get_training_data():
+    def eval_input_data(input_file: str, dataset_name: str, split, original_file: str = None):
+        # original_file when training on synthetic data
+        def get_training_data(file):
             def get_features_filters():
                 if dataset_name == 'sort':
                     return ['data_size_MB'], [('machine_type', '==', 'c4.2xlarge'), ('line_length', '==', 100)]
@@ -34,7 +35,7 @@ class Regression():
                     return None
 
             features, filters = get_features_filters()
-            input_df = pd.read_csv(input_file)
+            input_df = pd.read_csv(file)
             g = input_df.groupby(by=['instance_count', 'machine_type'] + features)
             input_df = pd.DataFrame(g.median().to_records())
             # Apply filters
@@ -60,16 +61,25 @@ class Regression():
             bom = BasicOptimisticModel()
             return gb, em, ogb, bom
 
-        def pred(model, X, y, test_size: float = 0.1):
+        def pred(model, X, y, test_size: float = 0.1, X_original = None, y_original = None):
+            # evaluate using the original data, if provided
             X_tr, X_te, y_tr, y_te = train_test_split(X, y, random_state=42, test_size=test_size)
-            model.fit(X_tr, y_tr)
-            y_hat = model.predict(X_te)
-            errors = (y_hat - y_te).to_numpy()
+            if X_original:
+                X_tr_original, X_te_original, y_tr_original, y_te_original = train_test_split(X_original, y_original, random_state=42, test_size=test_size)
+                model.fit(X_tr, y_tr)
+                y_hat = model.predict(X_te_original)
+                errors = (y_hat - y_te_original).to_numpy()
+            else:
+                model.fit(X_tr, y_tr)
+                y_hat = model.predict(X_te)
+                errors = (y_hat - y_te).to_numpy()
             mse, std = errors.mean() ** 2, errors.std()
             mape = np.mean(np.abs(errors / y_te)) * 100
             return mse, std, mape
 
-        X, y = get_training_data()
+        X, y = get_training_data(input_file)
+        if original_file:
+            X_orginal, y_original = get_training_data(original_file)
         results = []
         model_names = ['GradientBoosting', 'ErnestModel', 'OptimisticGradientBoosting', 'BasicOptimisticModel']
         models = init_models()

@@ -85,7 +85,8 @@ def regression_callbacks(app):
                                                 dataset_name=meta.dataset_name, split=split/100)
         )
         synthetic_results = postprocess_results(
-            eval_reg.Regression.eval_input_data(input_file=f'temp/{session_id}.csv', dataset_name=meta.dataset_name, split=split/100)
+            eval_reg.Regression.eval_input_data(input_file=f'temp/{session_id}.csv', dataset_name=meta.dataset_name,
+                                                 split=split/100, original_file=f'../datasets/{meta.dataset_name}.csv')
         )
 
         return [
