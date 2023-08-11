@@ -221,6 +221,18 @@ def show_synthesizer_options(synthesizer_name: str):
                 html.Label('Batch size'),
                 dbc.Input(id="batch_size", type="number", value=200, min=100, max=1000, step=100),
             ]),
+            html.Br(),
+            html.Div([
+                html.Label('Autodetect metadata'),
+                dcc.Dropdown(
+                    id='autodetect_metadata',
+                    options=[
+                        {'label': 'True', 'value': True},
+                        {'label': 'False', 'value': False},
+                    ],
+                    value=True
+                )
+            ]),
             dcc.Input(id='epsilon', style={'display': 'none'}),
         ])]
     else:
@@ -230,6 +242,7 @@ def show_synthesizer_options(synthesizer_name: str):
             dcc.Input(id='compress_dims', style={'display': 'none'}),
             dcc.Input(id='epochs', style={'display': 'none'}),
             dcc.Input(id='batch_size', style={'display': 'none'}),
+            dcc.Input(id='autodetect_metadata', style={'display': 'none'}),
             html.P("Select Epsilon"),
             dcc.Slider(0, 1, 0.1, value=0, id='epsilon'),
         ])]
@@ -254,6 +267,7 @@ def show_synthesizer_options(synthesizer_name: str):
             decompress_dims=dash.dependencies.State('decompress_dims', 'value'),
             epochs=dash.dependencies.State('epochs', 'value'),
             batch_size=dash.dependencies.State('batch_size', 'value'),
+            autodetect_metadata=dash.dependencies.State('autodetect_metadata', 'value'),
         ),
         n_clicks=dash.dependencies.Input('create-button', 'n_clicks')
     )

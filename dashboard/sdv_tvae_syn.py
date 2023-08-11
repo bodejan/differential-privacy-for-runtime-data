@@ -19,7 +19,7 @@ class SDVSynthesizer(Synthesizer):
             Generate synthetic data using the TVAE model and evaluate its quality.
     """
     def request(self, num_tuples: int = 1000, epochs: int = 1500, batch_size: int = 200,
-                enforce_min_max_values=True, compress_dims=None, decompress_dims=None, **_):
+                enforce_min_max_values=True, compress_dims=None, decompress_dims=None, autodetect_metadata=True, **_):
         """
         Generate synthetic data using the TVAE model and evaluate its quality.
 
@@ -30,11 +30,40 @@ class SDVSynthesizer(Synthesizer):
             enforce_min_max_values (bool, optional): Enforce minimum and maximum values (default: True).
             compress_dims (int, optional): Number of dimensions for data compression (default: None).
             decompress_dims (int, optional): Number of dimensions for data decompression (default: None).
+            autodetect_metadata (bool, optional): Metadata autodetection (default: True).
 
         Returns:
             plotly.graph_objs._figure.Figure: Visualization of column shapes.
             plotly.graph_objs._figure.Figure: Visualization of column pair trends.
         """
+        def update_c3o_metadata(metadata):
+            """
+            Update metadata information for specific columns.
+
+            Args:
+                metadata (SingleTableMetadata): Metadata of the dataset.
+
+            Returns:
+                SingleTableMetadata: Updated metadata.
+            """
+            try:
+                metadata.update_column(
+                    column_name='machine_type',
+                    sdtype='categorical')
+                
+                metadata.update_column(
+                    column_name='slots',
+                    sdtype='categorical')
+                
+                metadata.update_column(
+                    column_name='memory',
+                    sdtype='categorical')
+                print(metadata)
+            except Exception as e:
+                print(e)
+            finally:
+                return metadata
+
         if compress_dims is None:
             compress_dims = [256, 256]
         else:
@@ -58,6 +87,8 @@ class SDVSynthesizer(Synthesizer):
         print('TVAE configuration: ', configuration)
         metadata = SingleTableMetadata()
         metadata.detect_from_dataframe(data=input_df)
+        if not autodetect_metadata:
+            metadata = update_c3o_metadata(metadata)
         metadata.validate()
 
         synthesizer = TVAESynthesizer(
