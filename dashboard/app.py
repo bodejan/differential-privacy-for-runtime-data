@@ -120,6 +120,7 @@ home_content = html.Div([
                     # Graphs for data evaluation
                     dcc.Graph(id="eval_image"),
                     dcc.Graph(id="eval_image2"),
+                    html.P([html.I("Note: We use the Pearson correlation coefficient to compute numerical correlations.")]),
                 ], style={'height': '100%'}))
         ], width=8),
     ])
