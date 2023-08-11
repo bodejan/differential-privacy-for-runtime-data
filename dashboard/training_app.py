@@ -8,6 +8,12 @@ import pandas as pd
 
 
 def training_layout():
+    """
+    Define the layout for the training section of the dashboard.
+
+    Returns:
+        dash.html.Div: The layout for the training section.
+    """
     layout = html.Div(
         [
             html.Br(),
@@ -62,6 +68,12 @@ def training_layout():
 
 
 def training_callbacks(app):
+    """
+    Define the training callbacks for the dashboard.
+
+    Args:
+        app (dash.Dash): The Dash app instance.
+    """
     @app.callback(
         [dash.dependencies.Output('outputnn', 'children'),
          dash.dependencies.Output('eval_fig', 'figure'),
@@ -77,6 +89,23 @@ def training_callbacks(app):
 
          ], prevent_initial_call=True)
     def update_output(n_clicks, dataset, optimizer, split, epochs, uuid):
+        """
+        Update the output of the training section.
+
+        Args:
+            n_clicks (int): Number of times the submit button has been clicked.
+            dataset (str): Selected dataset name.
+            optimizer (str): Selected optimizer for training.
+            split (int): Test/Train split value.
+            epochs (int): Number of epochs for training.
+            uuid (str): Session ID.
+
+        Returns:
+            str: Output message.
+            dict: Figure for evaluation metric 1.
+            dict: Figure for evaluation metric 2.
+            list of dict: Data for the evaluation metrics DataTable.
+        """
         print(n_clicks)
         if n_clicks == 0:
             return "Please enter a value and click the submit button.", n_clicks

@@ -13,11 +13,38 @@ from sklearn.base import RegressorMixin, BaseEstimator
 
 
 class Regression():
+    """
+    A class for performing regression analysis using various models and evaluating their performance.
 
+    Methods:
+        eval_input_data(input_file, dataset_name, split, original_file=None):
+            Evaluate input data using different regression models.
+    """
     @staticmethod
     def eval_input_data(input_file: str, dataset_name: str, split, original_file: str = None):
-        # original_file when training on synthetic data
+        """
+        Evaluate input data using different regression models.
+
+        Args:
+            input_file (str): Path to the input CSV file containing data.
+            dataset_name (str): Name of the dataset being used.
+            split: Proportion of data to use for testing (between 0 and 1).
+            original_file (str, optional): Path to the original input file for synthetic data (default: None).
+
+        Returns:
+            list: List of dictionaries containing model names and their evaluation results.
+        """
         def get_training_data(file):
+            """
+            Load and preprocess training data based on the dataset name.
+
+            Args:
+                file (str): Path to the input CSV file.
+
+            Returns:
+                pandas.DataFrame: Feature matrix (X) and target vector (y).
+            """
+            # original_file when training on synthetic data
             def get_features_filters():
                 if dataset_name == 'sort':
                     return ['data_size_MB'], [('machine_type', '==', 'c4.2xlarge'), ('line_length', '==', 100)]
@@ -49,6 +76,12 @@ class Regression():
             return X, y
 
         def init_models():
+            """
+            Initialize different regression models.
+
+            Returns:
+                tuple: Instances of different regression models.
+            """
             # default models
             # GradientBoostingRegressor 
             gb = GradientBoosting()
@@ -62,6 +95,20 @@ class Regression():
             return gb, em, ogb, bom
 
         def pred(model, X, y, test_size: float = 0.1, X_original = None, y_original = None):
+            """
+            Make predictions using a given model and evaluate its performance.
+
+            Args:
+                model: A regression model instance.
+                X: Feature matrix.
+                y: Target vector.
+                test_size (float, optional): Proportion of data to use for testing (default: 0.1).
+                X_original: Feature matrix of original data (default: None).
+                y_original: Target vector of original data (default: None).
+
+            Returns:
+                tuple: Mean squared error (mse), standard deviation (std), mean absolute percentage error (mape).
+            """
             # evaluate using the original data, if provided
             X_tr, X_te, y_tr, y_te = train_test_split(X, y, random_state=42, test_size=test_size)
             if X_original:
@@ -92,6 +139,22 @@ class Regression():
 
 
 class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
+    """
+    Scaleout-Speedup Model (SSModel) for predicting runtime based on instance count and other features.
+    Inherits from BaseEstimator and RegressorMixin.
+
+    Args:
+        instance_count_index (int, optional): Index of the instance count feature (default: 0).
+        regressor: Regression model to use for scale-out predictions.
+
+    Methods:
+        preprocess(X, y):
+            Preprocesses the input data to extract the largest group of same features besides instance_count.
+        fit(X, y):
+            Fits the model to the training data.
+        predict(X):
+            Predicts runtimes based on instance count and other features.
+    """
 
     def __init__(self, instance_count_index=0, regressor=None):
         self.regressor = regressor
@@ -99,6 +162,16 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
         self.instance_count_index = instance_count_index  # index within features
 
     def preprocess(self, X, y):
+        """
+        Preprocesses the input data to extract the largest group of same features besides instance_count.
+
+        Args:
+            X: Feature matrix.
+            y: Target vector.
+
+        Returns:
+            Preprocessed feature matrix (X) and target vector (y).
+        """
         # Find biggest group of same features besides instance_count to learn from
         Xy = np.concatenate((X, y.reshape(-1, 1)), axis=1)
         features = pd.DataFrame(Xy)
@@ -111,6 +184,13 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
         return X, y
 
     def fit(self, X, y):
+        """
+        Fits the model to the training data.
+
+        Args:
+            X: Feature matrix.
+            y: Target vector.
+        """
         if X.shape[1] > 1:
             X, y = self.preprocess(X, y)
 
@@ -118,6 +198,15 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
         self.regressor.fit(X, y)
 
     def predict(self, X):
+        """
+        Predicts runtimes based on instance count and other features.
+
+        Args:
+            X: Feature matrix.
+
+        Returns:
+            numpy.ndarray: Predicted runtimes.
+        """
         rt_for_min_scaleout = self.regressor.predict(np.array([[self.min]]))
         # Make it a 2-dim array, as it is usually supposed to be
         rt = self.regressor.predict(X)[:, np.newaxis]
@@ -128,12 +217,33 @@ class SSModel(BaseEstimator, RegressorMixin):  # Scaleout-Speedup model
 
 
 class OptimisticModel(BaseEstimator, RegressorMixin):
+    """
+    Optimistic Model for predicting runtime based on Scaleout-Speedup Model and behavior model.
+    Inherits from BaseEstimator and RegressorMixin.
+
+    Args:
+        ibm: Behavior model for input features.
+        ssm: Scaleout-Speedup Model for predicting scale-out effects.
+
+    Methods:
+        fit(X, y):
+            Fits the model to the training data.
+        predict(X):
+            Predicts runtimes based on input features.
+    """
 
     def __init__(self, ibm, ssm):
         self.ssm = SSModel(regressor=ssm)
         self.ibm = ibm
 
     def fit(self, X, y):
+        """
+        Fits the model to the training data.
+
+        Args:
+            X: Feature matrix.
+            y: Target vector.
+        """
         X, y = np.array(X), np.array(y)
         self.instance_count_index = 0
         # Train scale-out speed-up model
@@ -148,6 +258,15 @@ class OptimisticModel(BaseEstimator, RegressorMixin):
         self.ibm.fit(X[:, inputs], y_projection)
 
     def predict(self, X):
+        """
+        Predicts runtimes based on input features.
+
+        Args:
+            X: Feature matrix.
+
+        Returns:
+            numpy.ndarray: Predicted runtimes.
+        """
         X = np.array(X)
         instance_count = X[:, [self.instance_count_index]]
         inputs = list([i for i in range(X.shape[1]) if i != self.instance_count_index])
@@ -158,6 +277,21 @@ class OptimisticModel(BaseEstimator, RegressorMixin):
 
 
 class BasicOptimisticModel(BaseEstimator, RegressorMixin):
+    """
+    Basic Optimistic Model that combines Linear Regression and Polynomial Regression.
+
+    This model uses the OptimisticModel to make predictions by combining Linear Regression for input behavior modeling
+    and Polynomial Regression for scale-out speed-up modeling.
+
+    Attributes:
+        estimator: An instance of the OptimisticModel using Linear Regression and Polynomial Regression.
+
+    Methods:
+        fit(X, y):
+            Fits the model to the training data.
+        predict(X):
+            Predicts runtimes based on input features.
+    """
 
     def __init__(self):
         polyreg3 = make_pipeline(PolynomialFeatures(3), LinearRegression())
@@ -168,6 +302,21 @@ class BasicOptimisticModel(BaseEstimator, RegressorMixin):
 
 
 class OptimisticGradientBoosting(BaseEstimator, RegressorMixin):
+    """
+    Optimistic Gradient Boosting Model for predicting runtime based on OptimisticModel with Gradient Boosting.
+
+    This model uses the OptimisticModel with Gradient Boosting regressors for input behavior modeling
+    and scale-out speed-up modeling.
+
+    Attributes:
+        estimator: An instance of the OptimisticModel using Gradient Boosting regressors.
+
+    Methods:
+        fit(X, y):
+            Fits the model to the training data.
+        predict(X):
+            Predicts runtimes based on input features.
+    """
 
     def __init__(self):
         ssm = GradientBoosting(learning_rate=0.5, n_estimators=50)
@@ -179,6 +328,25 @@ class OptimisticGradientBoosting(BaseEstimator, RegressorMixin):
 
 
 class GradientBoosting(BaseEstimator, RegressorMixin):
+    """
+    Gradient Boosting Model for predicting runtime.
+
+    This model uses the GradientBoostingRegressor with feature scaling.
+
+    Args:
+        learning_rate (float, optional): Learning rate for gradient boosting (default: 0.1).
+        n_estimators (int, optional): Number of boosting stages (default: 1000).
+
+    Attributes:
+        learning_rate (float): Learning rate for gradient boosting.
+        n_estimators (int): Number of boosting stages.
+
+    Methods:
+        fit(X, y):
+            Fits the model to the training data.
+        predict(X):
+            Predicts runtimes based on input features.
+    """
 
     def __init__(self, learning_rate=0.1, n_estimators=1000):
         self.learning_rate = learning_rate
@@ -195,6 +363,17 @@ class GradientBoosting(BaseEstimator, RegressorMixin):
 
 
 class ErnestModel(BaseEstimator, RegressorMixin):
+    """
+    Ernest Model for predicting runtime based on feature mapping and non-negative least squares optimization.
+
+    This model applies feature mapping and non-negative least squares optimization to predict runtime.
+
+    Methods:
+        fit(x, y):
+            Fits the model to the training data.
+        predict(x):
+            Predicts runtimes based on input features.
+    """
 
     def _fmap(self, x):
         x = np.array(x)
@@ -205,11 +384,27 @@ class ErnestModel(BaseEstimator, RegressorMixin):
         scaleout]
 
     def fit(self, x, y):
+        """
+        Fits the model to the training data.
+
+        Args:
+            x: Input features.
+            y: Target vector.
+        """
         X = self._fmap(x)
         y = np.array(y).flatten()
         self.coeff, _ = sp.optimize.nnls(X, y)
 
     def predict(self, x):
+        """
+        Predicts runtimes based on input features.
+
+        Args:
+            x: Input features.
+
+        Returns:
+            numpy.ndarray: Predicted runtimes.
+        """
         X = self._fmap(x)
         return np.dot(X, self.coeff)
 

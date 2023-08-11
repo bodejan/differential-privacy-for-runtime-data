@@ -1,8 +1,7 @@
 """
-    A simple dash interface for creating synthetic data for runtime prediction
+A simple dash interface for creating synthetic data for runtime prediction
 
-    Author: Seraphin Zunzer
-    Modified: 09.05.22
+Author: Seraphin Zunzer
 """
 
 import uuid
@@ -13,6 +12,7 @@ import pandas as pd
 from dash import html, dcc, dash_table
 from dash.dependencies import Output, Input, State
 
+# Import other necessary modules and components
 import cor_data_syn
 import ind_data_syn
 import sdv_tvae_syn
@@ -21,11 +21,13 @@ from regression_app import regression_layout, regression_callbacks
 from synthesizer import Synthesizer
 from training_app import training_callbacks, training_layout
 
+# Initialize the Dash app
 app = dash.Dash(
     __name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True,
 )
 app.title = "Synthetic Runtime Data"
 
+# Define the navbar with title
 navbar = html.Div(
     html.H1('Synthetic Data for Runtime Prediction', style={'color': 'white', 'margin': '0'}),
     style={
@@ -35,13 +37,14 @@ navbar = html.Div(
     },
 )
 
-
+# Function to generate a session ID
 def session_id():
     return str(uuid.uuid4()),
 
-
+# Define the home content section
 home_content = html.Div([
     html.Br(),
+    # Left column for data synthesis
     dbc.Row([
         dbc.Col([
             dbc.Card(
@@ -61,6 +64,7 @@ home_content = html.Div([
                         )
                     ]),
                     html.Br(),
+                    # Dropdown for selecting dataset
                     html.Div([
                         html.Label('Select Dataset'),
                         dcc.Dropdown(
@@ -75,18 +79,22 @@ home_content = html.Div([
                             value=''
                         )
                     ]),
+                    # Placeholder for specific synthesizer options
                     html.Br(),
                     html.Div(id='specific_options'),
+                    # Input for amount of data to generate
                     html.Br(),
                     html.P("Amount of Data to Generate"),
                     dbc.Input(id="amount", type="number", value=1000, min=10, max=100000, step=10),
                     html.Br(),
+                    # Button to initiate data synthesis
                     html.Div([
                         dcc.Loading(id="loading", type="default",
                                     children=[
                                         dbc.Button('Create', id='create-button', n_clicks=0, style={'width': '100%'}),
                                         html.Div(id='output')
                                     ])]),
+                    # Button to download the synthetic data file
                     html.Div([
                         dcc.Loading(id="loadingdownload",
                                     type="default",
@@ -99,6 +107,7 @@ home_content = html.Div([
 
                 ], style={'marginLeft': "0.5cm", 'height': '100%'}))
         ], width=4),
+        # Right column for data evaluation
         dbc.Col([
             dbc.Card(
                 dbc.CardBody([
@@ -108,6 +117,7 @@ home_content = html.Div([
                     html.P("Generated Synthetic Data:"),
                     dash_table.DataTable(id='csv-table-synthetic', data=[], page_size=10),
                     html.Br(),
+                    # Graphs for data evaluation
                     dcc.Graph(id="eval_image"),
                     dcc.Graph(id="eval_image2"),
                 ], style={'height': '100%'}))
@@ -116,6 +126,7 @@ home_content = html.Div([
 ]
 )
 
+# Define the app layout
 app.layout = html.Div(
     [
         navbar,
@@ -130,10 +141,11 @@ app.layout = html.Div(
         )
     ])
 
+# Register callbacks for other sections
 training_callbacks(app)
 regression_callbacks(app)
 
-
+# Callback to handle file download
 @app.callback(
     Output("download-text", "data"),
     State('session-id', 'children'),
@@ -145,17 +157,16 @@ def func(session_id, n_clicks):
         f'temp/{session_id[0]}.csv'
     )
 
-
+# Callback to update original dataset table
 @app.callback(
     [dash.dependencies.Output('csv-table-original', 'data')],
-    [dash.dependencies.Input('dataset', 'value')
-     ],
+    [dash.dependencies.Input('dataset', 'value')],
     prevent_initial_call=True)
 def update_output(value):
     df = pd.read_csv(f'../datasets/{value}.csv')
     return [df.to_dict('records')]
 
-
+# Callback to show specific synthesizer options
 @app.callback(
     [dash.dependencies.Output('specific_options', 'children')],
     [dash.dependencies.Input('synthesizer', 'value')],
@@ -223,7 +234,7 @@ def show_synthesizer_options(synthesizer_name: str):
             dcc.Slider(0, 1, 0.1, value=0, id='epsilon'),
         ])]
 
-
+# Callback to update synthetic data generation and evaluation
 @app.callback(
     [dash.dependencies.Output('output', 'children'),
      dash.dependencies.Output('eval_image', 'figure'),
@@ -278,7 +289,7 @@ def get_synthesizer_for_name(name: str):
     }
     return synthesizers[name]
 
-
+# Run the app
 if __name__ == "__main__":
     import matplotlib
 

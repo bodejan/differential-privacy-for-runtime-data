@@ -21,6 +21,12 @@ columns = [
 
 
 def regression_layout():
+    """
+    Defines the layout of the regression evaluation dashboard.
+
+    Returns:
+        layout (dash.html.Div): The layout of the dashboard.
+    """
     layout = html.Div(
         [
             html.Br(),
@@ -58,6 +64,15 @@ def regression_layout():
 
 
 def postprocess_results(results: Results) -> Results:
+    """
+    Post-processes the evaluation results to round float values to two decimal places.
+
+    Args:
+        results (Results): List of evaluation results.
+
+    Returns:
+        Results: Post-processed evaluation results.
+    """
     return [
         {key: round(value, 2) if isinstance(value, float) else value for key, value in result.items()} for result in
         results
@@ -65,6 +80,12 @@ def postprocess_results(results: Results) -> Results:
 
 
 def regression_callbacks(app):
+    """
+    Defines the callback functions for the regression evaluation dashboard.
+
+    Args:
+        app (dash.Dash): The Dash app instance.
+    """
     @app.callback(
         [
             dash.dependencies.Output('regression_results_original', 'data'),
@@ -76,6 +97,17 @@ def regression_callbacks(app):
         prevent_initial_call=True
     )
     def update_output(n_clicks, split, uuid: list[str]):
+        """
+        Updates the displayed results based on user inputs.
+
+        Args:
+            n_clicks (int): Number of times the submit button is clicked.
+            split (float): Test/train split percentage.
+            uuid (list[str]): List containing the session ID.
+
+        Returns:
+            list: Updated data for DataTables and an empty string for outputreg.
+        """
         session_id = uuid[0]
         meta = MetaInformation.from_id_file(session_id)
         print("Regression")
