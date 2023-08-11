@@ -10,8 +10,9 @@ from joblib import Parallel, delayed
 import json
 
 def grid_search():
-
-    # Ignore all warnings
+    """
+    Perform a grid search to find optimal hyperparameters for TVAESynthesizer.
+    """
     warnings.filterwarnings('ignore')
 
     # Define the parameter grid
@@ -28,33 +29,29 @@ def grid_search():
     }
 
     # Import data
-    # For now we focus on only one file: grep.tsv
     file = 'grep'
     script_directory = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(script_directory, f"c3o_data/{file}.tsv")
     data = pd.read_csv(path, sep='\t')
-    #print(data)
 
     # Create metadata
     metadata = SingleTableMetadata()
     metadata.detect_from_dataframe(data=data)
     metadata.validate()
 
-    # Define tupels based on grid
     grid_combinations = list(product(*param_grid.values()))
     grid_combinations_dict = []
+
+    # Create combinations with metadata
     for combination in grid_combinations:
         combination_dict = dict(zip(param_grid.keys(), combination))
         combination_dict['metadata'] = metadata
         grid_combinations_dict.append(combination_dict)
 
-    # Save combinations with score
     result = []
     grid_combinations_dict_len = len(grid_combinations_dict)
-    # For testing
-    #grid_combinations_dict = grid_combinations_dict[:10]
-
     num_cores = 4  # Number of cores to use for parallel execution
+
     processed_results = Parallel(n_jobs=num_cores)(
         delayed(process_combination)(index, combination, data, metadata, grid_combinations_dict_len)
         for index, combination in enumerate(grid_combinations_dict)
@@ -64,11 +61,24 @@ def grid_search():
 
     script_directory = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(script_directory, 'result_c3o.json')
+
     with open(path, 'w') as file:
         json.dump(result, file)
 
-
 def process_combination(index, combination, data, metadata, grid_combinations_dict_len):
+    """
+    Process a combination of hyperparameters for TVAESynthesizer.
+
+    Args:
+        index (int): Index of the combination.
+        combination (dict): Hyperparameter combination.
+        data: Real data.
+        metadata: Metadata for the dataset.
+        grid_combinations_dict_len (int): Total number of combinations.
+
+    Returns:
+        dict: Combination and its evaluation score.
+    """
     try:
         synthesizer = TVAESynthesizer(
             metadata=metadata,
@@ -82,7 +92,6 @@ def process_combination(index, combination, data, metadata, grid_combinations_di
             loss_factor=combination['loss_factor']
         )
         synthesizer.fit(data)
-        # Define path to avoid errors in parallelization
         script_directory = os.path.dirname(os.path.abspath(__file__))
         path = os.path.join(script_directory, f'sample/{index}')
         synthetic_data = synthesizer.sample(num_rows=1000, output_file_path=path);
@@ -102,12 +111,20 @@ def process_combination(index, combination, data, metadata, grid_combinations_di
         print(e)
         combination.pop('metadata')
         return {'combination': combination, 'score': 0}
-    
 
 def top10_config_for_file(file):
+    """
+    Generate and evaluate top 10 configurations for a given file.
+
+    Args:
+        file (str): Name of the dataset file.
+
+    Returns:
+        list: Scores of the top 10 configurations.
+    """
     # Load the JSON file
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(script_directory, 'c3o_TVAE_grep.json')
+    path = os.path.join(script_directory, f'c3o_TVAE_{file}.json')
     with open(path, 'r') as f:
         data = json.load(f)
 
@@ -119,14 +136,7 @@ def top10_config_for_file(file):
     sorted_scores = sorted(scores, reverse=True)
     sorted_configurations = [configurations[scores.index(score)] for score in sorted_scores]
 
-    # Get the top 10 configurations with the highest score
-    top_ten_sorted_scores = sorted_scores[:10]
-    top_10_configurations = sorted_configurations[:10]
-
-    #print(top_10_configurations)
-
     # Import data
-    script_directory = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(script_directory, f"c3o_data/{file}.tsv")
     data = pd.read_csv(path, sep='\t')
         
@@ -138,7 +148,7 @@ def top10_config_for_file(file):
     scores = []
     scores.append(file)
 
-    for combination in top_10_configurations:
+    for combination in sorted_configurations:
         synthesizer = TVAESynthesizer(
                 metadata=metadata,
                 enforce_min_max_values=combination['enforce_min_max_values'],
@@ -164,6 +174,9 @@ def top10_config_for_file(file):
     return scores
 
 def top10_config_for_all_files():
+    """
+    Generate and print the top 10 configurations for all files.
+    """
     grep = top10_config_for_file('grep')
     print('grep')
     kmeans = top10_config_for_file('kmeans')
@@ -175,24 +188,17 @@ def top10_config_for_all_files():
     sort = top10_config_for_file('sort')
     print('sort')
 
-    # Create an empty dictionary to store the column name and data
     data = {}
 
-    # Iterate over the arrays and extract the column name and data
+    # Create a DataFrame with top 10 scores for each file
     for array in [grep, kmeans, pagerank, sgd, sort]:
-        column_name = array[0]  # First entry as column name
-        column_data = array[1:]  # Remaining entries as data
+        column_name = array[0]
+        column_data = array[1:]
         data[column_name] = column_data
 
-    # Create the DataFrame
     df = pd.DataFrame(data)
-
-    # Print the DataFrame
-    print(df)
     script_directory = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(script_directory, 'c3o_TVAE_top10.csv')
     df.to_csv(path)
 
 top10_config_for_all_files()
-
-
