@@ -5,4 +5,4 @@ venv/**
 dashboard/assets/**
 dashboard/temp/
 dashboard/__pycache__/
-**/__pycache__
+venv/

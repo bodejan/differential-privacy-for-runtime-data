@@ -47,3 +47,5 @@ _Note: [CUDA](https://developer.nvidia.com/how-to-cuda-python) unavailable when 
 4. Navigate to dashboard folder: ```cd dashboard```
 
 5. Run app.py: ```python app.py```
+s
+Live demo: https://zunzer.github.io 
