@@ -1,51 +1,51 @@
 file,model,score
-grep,FastML,0.8808132431107709
-grep,CopulaGANSynthesizer,0.7709873769405082
-grep,CTGANSynthesizer,0.7422470003464074
-grep,GaussianCopulaSynthesizer,0.8352734107004136
-grep,TVAESynthesizer,0.8730603070836291
-kmeans,FastML,0.8353069284984183
-kmeans,CopulaGANSynthesizer,0.7096217013738466
-kmeans,CTGANSynthesizer,0.7506903904350968
-kmeans,GaussianCopulaSynthesizer,0.7778025332006152
-kmeans,TVAESynthesizer,0.8639904246173731
-pagerank,FastML,0.8441989520917247
-pagerank,CopulaGANSynthesizer,0.7318761016089439
-pagerank,CTGANSynthesizer,0.7117041291955428
-pagerank,GaussianCopulaSynthesizer,0.82461959586516
-pagerank,TVAESynthesizer,0.8766703375739795
-sgd,FastML,0.833353733408356
-sgd,CopulaGANSynthesizer,0.6906242926319119
-sgd,CTGANSynthesizer,0.7176809185676041
-sgd,GaussianCopulaSynthesizer,0.7655407110533532
-sgd,TVAESynthesizer,0.880018856515201
-sort,FastML,0.84443517761671
-sort,CopulaGANSynthesizer,0.7412369650611844
-sort,CTGANSynthesizer,0.7908751729158574
-sort,GaussianCopulaSynthesizer,0.8255417792524564
-sort,TVAESynthesizer,0.8132804290092525
-grep,FastML,0.8808132431107709
-grep,CopulaGANSynthesizer,0.7517048429782057
-grep,CTGANSynthesizer,0.7439103083423131
-grep,GaussianCopulaSynthesizer,0.8352734107004136
-grep,TVAESynthesizer,0.8617971453689973
-kmeans,FastML,0.8353069284984183
-kmeans,CopulaGANSynthesizer,0.7003063038435532
-kmeans,CTGANSynthesizer,0.736119685379631
-kmeans,GaussianCopulaSynthesizer,0.7778025332006152
-kmeans,TVAESynthesizer,0.8782828739196222
-pagerank,FastML,0.8441989520917247
-pagerank,CopulaGANSynthesizer,0.7376958007548747
-pagerank,CTGANSynthesizer,0.7492847639278407
-pagerank,GaussianCopulaSynthesizer,0.82461959586516
-pagerank,TVAESynthesizer,0.8830435495186226
-sgd,FastML,0.833353733408356
-sgd,CopulaGANSynthesizer,0.7005469603475413
-sgd,CTGANSynthesizer,0.735842863261742
-sgd,GaussianCopulaSynthesizer,0.7655407110533532
-sgd,TVAESynthesizer,0.8678012600972229
-sort,FastML,0.84443517761671
-sort,CopulaGANSynthesizer,0.6957533535592437
-sort,CTGANSynthesizer,0.7435355771712593
-sort,GaussianCopulaSynthesizer,0.8255417792524564
-sort,TVAESynthesizer,0.8158716704624148
+grep,FastML Synthesizer,0.8808132431107709
+grep,CopulaGAN Synthesizer,0.7709873769405082
+grep,CTGAN Synthesizer,0.7422470003464074
+grep,Gaussian Copula Synthesizer,0.8352734107004136
+grep,TVAE Synthesizer,0.8730603070836291
+kmeans,FastML Synthesizer,0.8353069284984183
+kmeans,CopulaGAN Synthesizer,0.7096217013738466
+kmeans,CTGAN Synthesizer,0.7506903904350968
+kmeans,Gaussian Copula Synthesizer,0.7778025332006152
+kmeans,TVAE Synthesizer,0.8639904246173731
+pagerank,FastML Synthesizer,0.8441989520917247
+pagerank,CopulaGAN Synthesizer,0.7318761016089439
+pagerank,CTGAN Synthesizer,0.7117041291955428
+pagerank,Gaussian Copula Synthesizer,0.82461959586516
+pagerank,TVAE Synthesizer,0.8766703375739795
+sgd,FastML Synthesizer,0.833353733408356
+sgd,CopulaGAN Synthesizer,0.6906242926319119
+sgd,CTGAN Synthesizer,0.7176809185676041
+sgd,Gaussian Copula Synthesizer,0.7655407110533532
+sgd,TVAE Synthesizer,0.880018856515201
+sort,FastML Synthesizer,0.84443517761671
+sort,CopulaGAN Synthesizer,0.7412369650611844
+sort,CTGAN Synthesizer,0.7908751729158574
+sort,Gaussian Copula Synthesizer,0.8255417792524564
+sort,TVAE Synthesizer,0.8132804290092525
+grep,FastML Synthesizer,0.8808132431107709
+grep,CopulaGAN Synthesizer,0.7517048429782057
+grep,CTGAN Synthesizer,0.7439103083423131
+grep,Gaussian Copula Synthesizer,0.8352734107004136
+grep,TVAE Synthesizer,0.8617971453689973
+kmeans,FastML Synthesizer,0.8353069284984183
+kmeans,CopulaGAN Synthesizer,0.7003063038435532
+kmeans,CTGAN Synthesizer,0.736119685379631
+kmeans,Gaussian Copula Synthesizer,0.7778025332006152
+kmeans,TVAE Synthesizer,0.8782828739196222
+pagerank,FastML Synthesizer,0.8441989520917247
+pagerank,CopulaGAN Synthesizer,0.7376958007548747
+pagerank,CTGAN Synthesizer,0.7492847639278407
+pagerank,Gaussian Copula Synthesizer,0.82461959586516
+pagerank,TVAE Synthesizer,0.8830435495186226
+sgd,FastML Synthesizer,0.833353733408356
+sgd,CopulaGAN Synthesizer,0.7005469603475413
+sgd,CTGAN Synthesizer,0.735842863261742
+sgd,Gaussian Copula Synthesizer,0.7655407110533532
+sgd,TVAE Synthesizer,0.8678012600972229
+sort,FastML Synthesizer,0.84443517761671
+sort,CopulaGAN Synthesizer,0.6957533535592437
+sort,CTGAN Synthesizer,0.7435355771712593
+sort,Gaussian Copula Synthesizer,0.8255417792524564
+sort,TVAE Synthesizer,0.8158716704624148
