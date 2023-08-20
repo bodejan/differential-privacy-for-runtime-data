@@ -104,7 +104,7 @@ class NN():
             mse = 0
             for i in range(len(prediction)):
                 mse += (truth[i]-prediction[i])**2
-            return mse
+            return mse/len(prediction)
 
 
         def calculate_mae(prediction, truth):
@@ -117,7 +117,7 @@ class NN():
             mae = 0
             for i in range(len(prediction)):
                 mae += abs(truth[i] - prediction[i])
-            return mae
+            return mae/len(prediction)
 
         def calculate_mape(prediction, truth):
             """
@@ -128,8 +128,8 @@ class NN():
             """
             mape = 0
             for i in range(len(prediction)):
-                mape += np.mean(np.abs((truth[i] - prediction[i]) / truth[i])) * 100
-            return mape
+                mape += (np.abs(truth[i] - prediction[i]) / np.abs(truth[i]))*100
+            return mape/len(prediction)
 
 
         def plot_scatter(predicted_values, true_values, mode: str="syn", num_private: int = 0, num_synthetic: int = 0):
