@@ -1,9 +1,7 @@
 # differential-privacy-for-runtime-data
 
-
-
-
-# README
+## Description
+This repository incorporates advanced algorithms to establish differential privacy for runtime data and offers an interactive web-based interface for users to deploy these algorithms and evaluate the results.
 
 This README provides instructions for building and running a Docker container based on the provided Dockerfile.
 
@@ -47,5 +45,3 @@ _Note: [CUDA](https://developer.nvidia.com/how-to-cuda-python) unavailable when 
 4. Navigate to dashboard folder: ```cd dashboard```
 
 5. Run app.py: ```python app.py```
-
-Live demo: https://zunzer.github.io 
